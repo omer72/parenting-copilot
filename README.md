@@ -23,8 +23,19 @@ cp .env.example .env
 # VITE_ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-## 🔑 קבלת API Key של Claude
+## 🔑 קבלת API Key
 
+### אופציה 1: OpenAI (מומלץ)
+1. היכנס ל-[OpenAI Platform](https://platform.openai.com/)
+2. צור חשבון או התחבר
+3. עבור ל-API Keys
+4. צור מפתח חדש והעתק אותו
+5. הדבק את המפתח בקובץ `.env`:
+   ```
+   VITE_OPENAI_API_KEY=sk-...
+   ```
+
+### אופציה 2: Claude (Anthropic)
 1. היכנס ל-[Anthropic Console](https://console.anthropic.com/)
 2. צור חשבון או התחבר
 3. עבור ל-API Keys
@@ -33,6 +44,8 @@ cp .env.example .env
    ```
    VITE_ANTHROPIC_API_KEY=sk-ant-api03-...
    ```
+
+**הערה:** אפשר להגדיר את שני המפתחות - המערכת תשתמש ב-OpenAI כברירת מחדל ותעבור ל-Claude כ-fallback.
 
 ## 💻 הפעלה
 
@@ -63,7 +76,7 @@ npm run preview
 - **Vite** - כלי build מהיר
 - **TailwindCSS 4** - עיצוב מודרני
 - **React Router** - ניווט
-- **Anthropic Claude** - AI לתשובות חכמות
+- **Anthropic Claude / OpenAI GPT-4** - AI לתשובות חכמות
 
 ## 📝 רישיון
 
