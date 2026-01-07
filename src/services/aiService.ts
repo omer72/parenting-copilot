@@ -3,15 +3,29 @@ import OpenAI from 'openai';
 import type { AIResponse, Session, Child } from '../types';
 import { responseTemplates, defaultResponses, generateClarificationQuestions } from '../data/mockResponses';
 
-const anthropic = new Anthropic({
-  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  dangerouslyAllowBrowser: true, // Note: In production, use a backend proxy
-});
+// Lazy initialization of API clients
+let anthropicClient: Anthropic | null = null;
+let openaiClient: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true, // Note: In production, use a backend proxy
-});
+function getAnthropicClient(): Anthropic {
+  if (!anthropicClient) {
+    anthropicClient = new Anthropic({
+      apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY || 'dummy-key',
+      dangerouslyAllowBrowser: true,
+    });
+  }
+  return anthropicClient;
+}
+
+function getOpenAIClient(): OpenAI {
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY || 'dummy-key',
+      dangerouslyAllowBrowser: true,
+    });
+  }
+  return openaiClient;
+}
 
 function findMatchingResponse(description: string): AIResponse {
   const lowerDescription = description.toLowerCase();
@@ -72,6 +86,7 @@ ${session.clarifications.map(c => `- ${c.question}: ${c.answer}`).join('\n')}
 - התחשב בהקשר והמצב הרגשי של ההורה
 - השתמש בשפה חמה ותומכת`;
 
+  const anthropic = getAnthropicClient();
   const message = await anthropic.messages.create({
     model: 'claude-3-5-sonnet-20241022',
     max_tokens: 1024,
@@ -147,6 +162,7 @@ ${session.clarifications.map(c => `- ${c.question}: ${c.answer}`).join('\n')}
 - השתמש בשפה חמה ותומכת
 - החזר רק את ה-JSON, ללא טקסט נוסף`;
 
+  const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [
