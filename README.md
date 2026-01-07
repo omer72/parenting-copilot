@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# Parenting Copilot 👨‍👩‍👧‍👦
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+אפליקציית עזרה מעשית להורים להתמודדות עם סיטואציות מאתגרות עם ילדים.
 
-Currently, two official plugins are available:
+## ✨ תכונות
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎯 עזרה מיידית בסיטואציות מאתגרות
+- 👶 ניהול פרופילים של מספר ילדים
+- 🤖 תשובות מותאמות אישית באמצעות Claude AI
+- 📱 ממשק מודרני וידידותי
+- 🇮🇱 ממשק בעברית
 
-## React Compiler
+## 🚀 התקנה
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# התקן תלויות
+npm install
 
-## Expanding the ESLint configuration
+# העתק את קובץ הסביבה לדוגמה
+cp .env.example .env
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# ערוך את קובץ .env והוסף את מפתח ה-API של Anthropic
+# VITE_ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🔑 קבלת API Key של Claude
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. היכנס ל-[Anthropic Console](https://console.anthropic.com/)
+2. צור חשבון או התחבר
+3. עבור ל-API Keys
+4. צור מפתח חדש והעתק אותו
+5. הדבק את המפתח בקובץ `.env`:
+   ```
+   VITE_ANTHROPIC_API_KEY=sk-ant-api03-...
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 💻 הפעלה
+
+```bash
+# הפעל את שרת הפיתוח
+npm run dev
+
+# בניה לפרודקשן
+npm run build
+
+# תצוגה מקדימה של הבניה
+npm run preview
 ```
+
+## ⚠️ הערה חשובה לפרודקשן
+
+הקוד הנוכחי משתמש ב-`dangerouslyAllowBrowser: true` כדי לאפשר קריאות ישירות ל-Claude API מהדפדפן. 
+
+**בפרודקשן, מומלץ מאוד:**
+- להעביר את הקריאות ל-API דרך שרת backend
+- לשמור את מפתח ה-API בצד השרת בלבד
+- להשתמש ב-environment variables מאובטחות
+
+## 🛠️ טכנולוגיות
+
+- **React 19** - ספריית UI
+- **TypeScript** - פיתוח מאובטח עם טיפוסים
+- **Vite** - כלי build מהיר
+- **TailwindCSS 4** - עיצוב מודרני
+- **React Router** - ניווט
+- **Anthropic Claude** - AI לתשובות חכמות
+
+## 📝 רישיון
+
+פרויקט פרטי
+
+## 💡 תמיכה
+
+לא מחליף ייעוץ מקצועי - האפליקציה מספקת עצות כלליות בלבד.
