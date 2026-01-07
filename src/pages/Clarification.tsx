@@ -74,7 +74,7 @@ export function Clarification() {
       <div className="max-w-md mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-500 mb-4 flex items-center gap-1"
+          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>→</span>
           <span>חזרה</span>
@@ -84,19 +84,19 @@ export function Clarification() {
           {questions.map((_, index) => (
             <div
               key={index}
-              className={`h-1 flex-1 rounded-full ${
-                index <= currentQuestionIndex ? 'bg-indigo-500' : 'bg-gray-200'
+              className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+                index <= currentQuestionIndex ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-purple-100'
               }`}
             />
           ))}
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
           שאלת הבהרה
         </h1>
 
         <Card className="mb-6">
-          <p className="text-lg font-medium text-gray-800">{currentQuestion}</p>
+          <p className="text-lg font-semibold text-purple-900">{currentQuestion}</p>
         </Card>
 
         <div className="space-y-3">

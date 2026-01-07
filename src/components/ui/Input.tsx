@@ -14,13 +14,13 @@ export function Input({ label, error, className = '', ...props }: InputProps) {
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-semibold text-purple-900">{label}</label>
       )}
       <input
-        className={`px-4 py-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 ${error ? 'border-red-500' : ''} ${className}`}
+        className={`px-4 py-3 rounded-2xl border-2 border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 bg-white/80 ${error ? 'border-red-500' : ''} ${className}`}
         {...props}
       />
-      {error && <span className="text-sm text-red-500">{error}</span>}
+      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
     </div>
   );
 }
@@ -29,13 +29,13 @@ export function Textarea({ label, error, className = '', ...props }: TextareaPro
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-semibold text-purple-900">{label}</label>
       )}
       <textarea
-        className={`px-4 py-3 rounded-xl border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 resize-none ${error ? 'border-red-500' : ''} ${className}`}
+        className={`px-4 py-3 rounded-2xl border-2 border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 resize-none bg-white/80 ${error ? 'border-red-500' : ''} ${className}`}
         {...props}
       />
-      {error && <span className="text-sm text-red-500">{error}</span>}
+      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
     </div>
   );
 }

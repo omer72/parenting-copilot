@@ -17,13 +17,13 @@ export function SelectChild() {
       <div className="max-w-md mx-auto">
         <button
           onClick={() => navigate('/')}
-          className="text-gray-500 mb-4 flex items-center gap-1"
+          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>→</span>
           <span>חזרה</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
           על איזה ילד מדובר?
         </h1>
 
@@ -35,10 +35,10 @@ export function SelectChild() {
               className="flex justify-between items-center"
             >
               <div>
-                <h3 className="font-semibold text-lg">{child.name}</h3>
-                <p className="text-gray-500 text-sm">גיל {child.age}</p>
+                <h3 className="font-bold text-lg text-purple-900">{child.name}</h3>
+                <p className="text-purple-600 text-sm font-medium">גיל {child.age}</p>
               </div>
-              <span className="text-2xl">←</span>
+              <span className="text-2xl text-purple-500">←</span>
             </Card>
           ))}
         </div>

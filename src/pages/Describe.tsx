@@ -30,18 +30,18 @@ export function Describe() {
       <div className="max-w-md mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-500 mb-4 flex items-center gap-1"
+          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>→</span>
           <span>חזרה</span>
         </button>
 
         {child && (
-          <p className="text-indigo-600 font-medium mb-2">{child.name}</p>
+          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
         )}
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">מה קורה?</h1>
-        <p className="text-gray-600 mb-6">תאר בקצרה את הסיטואציה</p>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">מה קורה?</h1>
+        <p className="text-purple-700 mb-6 font-medium">תאר בקצרה את הסיטואציה</p>
 
         <Textarea
           value={description}
@@ -51,7 +51,7 @@ export function Describe() {
           className="text-lg"
         />
 
-        <p className="text-sm text-gray-400 mt-2">
+        <p className="text-sm text-purple-400 mt-2 font-medium">
           {description.length} תווים (מינימום 10)
         </p>
 

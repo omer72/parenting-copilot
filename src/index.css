@@ -2,11 +2,11 @@
 
 @theme {
   --font-family-sans: 'Heebo', system-ui, -apple-system, sans-serif;
-  --color-primary: #6366f1;
-  --color-primary-dark: #4f46e5;
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  --color-primary: #8b5cf6;
+  --color-primary-dark: #7c3aed;
+  --color-success: #10b981;
+  --color-danger: #f43f5e;
+  --color-info: #06b6d4;
 }
 
 @layer base {
@@ -15,7 +15,8 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 min-h-screen font-sans;
+    background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 25%, #f3e8ff 50%, #e9d5ff 100%);
+    @apply text-gray-900 min-h-screen font-sans;
     margin: 0;
   }
 }

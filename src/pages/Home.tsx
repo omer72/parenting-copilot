@@ -20,10 +20,10 @@ export function Home() {
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-md mx-auto w-full">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 drop-shadow-sm">
             Parenting Copilot
           </h1>
-          <p className="text-gray-600">
+          <p className="text-purple-700 text-lg font-medium">
             עזרה מעשית לרגעים מאתגרים עם הילדים
           </p>
         </div>
@@ -38,15 +38,15 @@ export function Home() {
 
         {children.length > 0 && (
           <Card className="w-full">
-            <h2 className="font-semibold text-gray-800 mb-3">הילדים שלי</h2>
-            <div className="space-y-2">
+            <h2 className="font-bold text-purple-800 mb-4 text-lg">הילדים שלי</h2>
+            <div className="space-y-3">
               {children.map(child => (
                 <div
                   key={child.id}
-                  className="flex justify-between items-center p-2 bg-gray-50 rounded-lg"
+                  className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
                 >
-                  <span className="font-medium">{child.name}</span>
-                  <span className="text-gray-500 text-sm">גיל {child.age}</span>
+                  <span className="font-semibold text-purple-900">{child.name}</span>
+                  <span className="text-purple-600 text-sm font-medium">גיל {child.age}</span>
                 </div>
               ))}
             </div>
@@ -62,7 +62,7 @@ export function Home() {
         )}
       </div>
 
-      <footer className="text-center text-sm text-gray-400 mt-8">
+      <footer className="text-center text-sm text-purple-400 mt-8 font-medium">
         לא מחליף ייעוץ מקצועי
       </footer>
     </div>

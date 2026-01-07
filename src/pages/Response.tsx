@@ -57,9 +57,9 @@ export function Response() {
   if (loading) {
     return (
       <div className="min-h-screen p-4 flex flex-col items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full mb-4" />
-        <p className="text-gray-600">מעבד את הסיטואציה...</p>
-        <p className="text-gray-400 text-sm mt-2">זה לוקח 5-10 שניות</p>
+        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mb-4" />
+        <p className="text-purple-700 font-semibold">מעבד את הסיטואציה...</p>
+        <p className="text-purple-400 text-sm mt-2 font-medium">זה לוקח 5-10 שניות</p>
       </div>
     );
   }
@@ -77,10 +77,10 @@ export function Response() {
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
         {child && (
-          <p className="text-indigo-600 font-medium mb-2">{child.name}</p>
+          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
         )}
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">הנה מה לעשות</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">הנה מה לעשות</h1>
 
         <div className="space-y-4">
           <Card className="border-r-4 border-green-500">
@@ -123,7 +123,7 @@ export function Response() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-purple-400 mt-6 font-medium">
           לא מחליף ייעוץ מקצועי
         </p>
       </div>

@@ -38,21 +38,21 @@ export function Context() {
       <div className="max-w-md mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-500 mb-4 flex items-center gap-1"
+          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>→</span>
           <span>חזרה</span>
         </button>
 
         {child && (
-          <p className="text-indigo-600 font-medium mb-2">{child.name}</p>
+          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
         )}
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">מה ההקשר?</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">מה ההקשר?</h1>
 
         <div className="space-y-6">
           <div>
-            <h3 className="font-medium text-gray-700 mb-2">מיקום</h3>
+            <h3 className="font-bold text-purple-900 mb-3">מיקום</h3>
             <div className="flex flex-wrap gap-2">
               {(Object.entries(contextLabels.location) as [Location, string][]).map(
                 ([key, label]) => (
@@ -68,7 +68,7 @@ export function Context() {
           </div>
 
           <div>
-            <h3 className="font-medium text-gray-700 mb-2">מי נוכח?</h3>
+            <h3 className="font-bold text-purple-900 mb-3">מי נוכח?</h3>
             <div className="flex flex-wrap gap-2">
               {(Object.entries(contextLabels.presence) as [Presence, string][]).map(
                 ([key, label]) => (
@@ -84,7 +84,7 @@ export function Context() {
           </div>
 
           <div>
-            <h3 className="font-medium text-gray-700 mb-2">פרטיות</h3>
+            <h3 className="font-bold text-purple-900 mb-3">פרטיות</h3>
             <div className="flex flex-wrap gap-2">
               {(Object.entries(contextLabels.physicality) as [Physicality, string][]).map(
                 ([key, label]) => (
@@ -100,7 +100,7 @@ export function Context() {
           </div>
 
           <div>
-            <h3 className="font-medium text-gray-700 mb-2">מצב רוח שלך</h3>
+            <h3 className="font-bold text-purple-900 mb-3">מצב רוח שלך</h3>
             <div className="flex flex-wrap gap-2">
               {(
                 Object.entries(contextLabels.emotionalState) as [EmotionalState, string][]

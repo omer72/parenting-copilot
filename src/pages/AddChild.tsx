@@ -50,13 +50,13 @@ export function AddChild() {
       <div className="max-w-md mx-auto">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-500 mb-4 flex items-center gap-1"
+          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>→</span>
           <span>חזרה</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">הוספת ילד</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">הוספת ילד</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
