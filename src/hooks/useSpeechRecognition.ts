@@ -1,14 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 
-interface SpeechRecognitionEvent {
-  results: {
-    [index: number]: {
-      [index: number]: {
-        transcript: string;
-      };
-      isFinal: boolean;
-    };
+interface SpeechRecognitionResult {
+  [index: number]: {
+    transcript: string;
   };
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionResultList {
+  [index: number]: SpeechRecognitionResult;
+  length: number;
+}
+
+interface SpeechRecognitionEvent {
+  results: SpeechRecognitionResultList;
 }
 
 interface SpeechRecognitionErrorEvent {
