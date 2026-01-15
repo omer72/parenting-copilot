@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Chip } from '../components/ui/Chip';
@@ -10,27 +10,28 @@ export function Clarification() {
   const navigate = useNavigate();
   const { currentSession, updateSession } = useApp();
 
-  const [questions, setQuestions] = useState<string[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<{ question: string; answer: string }[]>([]);
-
-  useEffect(() => {
+  const questions = useMemo(() => {
     if (currentSession?.description && currentSession?.context) {
-      const clarificationQuestions = getClarificationQuestions(
+      return getClarificationQuestions(
         currentSession.description,
         {
           location: currentSession.context.location,
           presence: currentSession.context.presence,
         }
       );
-      setQuestions(clarificationQuestions);
-
-      // If no questions, skip to response
-      if (clarificationQuestions.length === 0) {
-        navigate('/response');
-      }
     }
-  }, [currentSession, navigate]);
+    return [];
+  }, [currentSession]);
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<{ question: string; answer: string }[]>([]);
+
+  useEffect(() => {
+    // If no questions, skip to response
+    if (questions.length === 0 && currentSession?.description) {
+      navigate('/response');
+    }
+  }, [questions, currentSession, navigate]);
 
   const handleAnswer = (answer: string) => {
     const newAnswers = [
