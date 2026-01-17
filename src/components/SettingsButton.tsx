@@ -24,7 +24,7 @@ export function SettingsButton() {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full mt-2 bg-white rounded-xl shadow-lg border border-purple-100 p-4 z-20 min-w-[200px] ltr:right-0 rtl:left-0">
+          <div className="absolute top-full mt-2 left-0 bg-white rounded-xl shadow-lg border border-purple-100 p-4 z-20 min-w-50">
             <h3 className="font-semibold text-purple-900 mb-3">{t.common.language}</h3>
             <div className="space-y-2">
               <button
