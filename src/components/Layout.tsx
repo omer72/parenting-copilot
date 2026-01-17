@@ -8,7 +8,7 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   return (
     <div className="relative">
-      <div className="fixed top-4 ltr:right-4 rtl:left-4 z-50">
+      <div className="fixed top-4 left-4 z-50">
         <SettingsButton />
       </div>
       {children}
