@@ -5,10 +5,12 @@ import { Chip } from '../components/ui/Chip';
 import { Card } from '../components/ui/Card';
 import { useApp } from '../context/AppContext';
 import { getClarificationQuestions } from '../services/aiService';
+import { useTranslation } from '../locales';
 
 export function Clarification() {
   const navigate = useNavigate();
   const { currentSession, updateSession } = useApp();
+  const { t, isRTL } = useTranslation();
 
   const questions = useMemo(() => {
     if (currentSession?.description && currentSession?.context) {
@@ -56,7 +58,7 @@ export function Clarification() {
   if (questions.length === 0) {
     return (
       <div className="min-h-screen p-4 flex items-center justify-center">
-        <p className="text-gray-500">טוען...</p>
+        <p className="text-gray-500">{t.common.loading}</p>
       </div>
     );
   }
@@ -64,10 +66,10 @@ export function Clarification() {
   const currentQuestion = questions[currentQuestionIndex];
 
   const quickAnswers = [
-    'כן',
-    'לא',
-    'לפעמים',
-    'לא בטוח',
+    t.clarification.yes,
+    t.clarification.no,
+    t.clarification.sometimes,
+    t.clarification.notSure,
   ];
 
   return (
@@ -77,8 +79,8 @@ export function Clarification() {
           onClick={() => navigate(-1)}
           className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
-          <span>→</span>
-          <span>חזרה</span>
+          <span>{isRTL ? '→' : '←'}</span>
+          <span>{t.common.back}</span>
         </button>
 
         <div className="flex items-center gap-2 mb-6">
@@ -93,7 +95,7 @@ export function Clarification() {
         </div>
 
         <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-          שאלת הבהרה
+          {t.clarification.title}
         </h1>
 
         <Card className="mb-6">
@@ -116,7 +118,7 @@ export function Clarification() {
             fullWidth
             onClick={handleSkip}
           >
-            דלג והמשך
+            {t.clarification.skipAndContinue}
           </Button>
         </div>
       </div>

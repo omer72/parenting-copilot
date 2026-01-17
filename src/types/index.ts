@@ -29,12 +29,20 @@ export interface Session {
   context: SessionContext;
   description: string;
   clarifications: Clarification[];
+  conversationHistory?: ConversationTurn[];
 }
 
 export interface AIResponse {
   doNow: string;
   dontDo: string;
   sayThis: string;
+}
+
+export interface ConversationTurn {
+  response: AIResponse;
+  feedback?: 'helped' | 'not_helped';
+  followUp?: string;
+  timestamp: Date;
 }
 
 export interface AppState {

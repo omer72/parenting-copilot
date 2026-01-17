@@ -2,10 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from '../locales';
 
 export function Home() {
   const navigate = useNavigate();
   const { children, setCurrentSession } = useApp();
+  const { t } = useTranslation();
 
   const handleNewSituation = () => {
     setCurrentSession(null);
@@ -32,12 +34,12 @@ export function Home() {
           fullWidth
           className="text-lg py-4"
         >
-          יש סיטואציה עכשיו
+          {t.home.situationButton}
         </Button>
 
         {children.length > 0 && (
           <Card className="w-full">
-            <h2 className="font-bold text-purple-800 mb-4 text-lg">הילדים שלי</h2>
+            <h2 className="font-bold text-purple-800 mb-4 text-lg">{t.home.myChildren}</h2>
             <div className="space-y-3">
               {children.map(child => (
                 <div
@@ -45,7 +47,9 @@ export function Home() {
                   className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
                 >
                   <span className="font-semibold text-purple-900">{child.name}</span>
-                  <span className="text-purple-600 text-sm font-medium">גיל {child.age}</span>
+                  <span className="text-purple-600 text-sm font-medium">
+                    {t.common.ageValue.replace('{age}', String(child.age))}
+                  </span>
                 </div>
               ))}
             </div>
@@ -55,14 +59,14 @@ export function Home() {
               className="mt-3"
               onClick={() => navigate('/add-child')}
             >
-              הוסף ילד
+              {t.home.addChild}
             </Button>
           </Card>
         )}
       </div>
 
       <footer className="text-center text-sm text-purple-400 mt-8 font-medium">
-        לא מחליף ייעוץ מקצועי
+        {t.common.disclaimer}
       </footer>
     </div>
   );

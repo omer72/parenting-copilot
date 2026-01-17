@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Chip } from '../components/ui/Chip';
 import { useApp } from '../context/AppContext';
-import { contextLabels } from '../services/aiService';
+import { useTranslation } from '../locales';
 import type { Location, Presence, Physicality, EmotionalState } from '../types';
 
 export function Context() {
   const navigate = useNavigate();
   const { updateSession, getChildById, currentSession } = useApp();
+  const { t, isRTL } = useTranslation();
 
   const child = currentSession?.childId ? getChildById(currentSession.childId) : null;
 
@@ -33,6 +34,33 @@ export function Context() {
     navigate('/describe');
   };
 
+  const locationOptions: { key: Location; label: string }[] = [
+    { key: 'home', label: t.context.locations.home },
+    { key: 'street', label: t.context.locations.street },
+    { key: 'car', label: t.context.locations.car },
+    { key: 'mall', label: t.context.locations.mall },
+    { key: 'restaurant', label: t.context.locations.restaurant },
+  ];
+
+  const presenceOptions: { key: Presence; label: string }[] = [
+    { key: 'alone', label: t.context.presence.alone },
+    { key: 'spouse', label: t.context.presence.spouse },
+    { key: 'other_adults', label: t.context.presence.other_adults },
+    { key: 'strangers', label: t.context.presence.strangers },
+  ];
+
+  const physicalityOptions: { key: Physicality; label: string }[] = [
+    { key: 'private', label: t.context.physicality.private },
+    { key: 'public', label: t.context.physicality.public },
+  ];
+
+  const emotionalStateOptions: { key: EmotionalState; label: string }[] = [
+    { key: 'calm', label: t.context.emotionalState.calm },
+    { key: 'frustrated', label: t.context.emotionalState.frustrated },
+    { key: 'angry', label: t.context.emotionalState.angry },
+    { key: 'anxious', label: t.context.emotionalState.anxious },
+  ];
+
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
@@ -40,71 +68,65 @@ export function Context() {
           onClick={() => navigate(-1)}
           className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
-          <span>→</span>
-          <span>חזרה</span>
+          <span>{isRTL ? '→' : '←'}</span>
+          <span>{t.common.back}</span>
         </button>
 
         {child && (
           <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
         )}
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">מה ההקשר?</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+          {t.context.title}
+        </h1>
 
         <div className="space-y-6">
           <div>
-            <h3 className="font-bold text-purple-900 mb-3">מיקום</h3>
+            <h3 className="font-bold text-purple-900 mb-3">{t.context.location}</h3>
             <div className="flex flex-wrap gap-2">
-              {(Object.entries(contextLabels.location) as [Location, string][]).map(
-                ([key, label]) => (
-                  <Chip
-                    key={key}
-                    label={label}
-                    selected={location === key}
-                    onClick={() => setLocation(key)}
-                  />
-                )
-              )}
+              {locationOptions.map(({ key, label }) => (
+                <Chip
+                  key={key}
+                  label={label}
+                  selected={location === key}
+                  onClick={() => setLocation(key)}
+                />
+              ))}
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-purple-900 mb-3">מי נוכח?</h3>
+            <h3 className="font-bold text-purple-900 mb-3">{t.context.whoPresent}</h3>
             <div className="flex flex-wrap gap-2">
-              {(Object.entries(contextLabels.presence) as [Presence, string][]).map(
-                ([key, label]) => (
-                  <Chip
-                    key={key}
-                    label={label}
-                    selected={presence === key}
-                    onClick={() => setPresence(key)}
-                  />
-                )
-              )}
+              {presenceOptions.map(({ key, label }) => (
+                <Chip
+                  key={key}
+                  label={label}
+                  selected={presence === key}
+                  onClick={() => setPresence(key)}
+                />
+              ))}
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-purple-900 mb-3">פרטיות</h3>
+            <h3 className="font-bold text-purple-900 mb-3">{t.context.privacy}</h3>
             <div className="flex flex-wrap gap-2">
-              {(Object.entries(contextLabels.physicality) as [Physicality, string][]).map(
-                ([key, label]) => (
-                  <Chip
-                    key={key}
-                    label={label}
-                    selected={physicality === key}
-                    onClick={() => setPhysicality(key)}
-                  />
-                )
-              )}
+              {physicalityOptions.map(({ key, label }) => (
+                <Chip
+                  key={key}
+                  label={label}
+                  selected={physicality === key}
+                  onClick={() => setPhysicality(key)}
+                />
+              ))}
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-purple-900 mb-3">מצב רוח שלך</h3>
+            <h3 className="font-bold text-purple-900 mb-3">{t.context.yourMood}</h3>
             <div className="flex flex-wrap gap-2">
-              {(
-                Object.entries(contextLabels.emotionalState) as [EmotionalState, string][]
-              ).map(([key, label]) => (
+              {emotionalStateOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
                   label={label}
@@ -122,7 +144,7 @@ export function Context() {
           className="mt-8"
           disabled={!isComplete}
         >
-          המשך
+          {t.common.continue}
         </Button>
       </div>
     </div>

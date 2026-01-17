@@ -4,25 +4,28 @@ import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Input';
 import { useApp } from '../context/AppContext';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { useTranslation } from '../locales';
 
 export function Describe() {
   const navigate = useNavigate();
   const { updateSession, getChildById, currentSession } = useApp();
+  const { t, isRTL } = useTranslation();
 
   const child = currentSession?.childId ? getChildById(currentSession.childId) : null;
 
   const [description, setDescription] = useState('');
-  const { 
-    isListening, 
-    transcript, 
-    isSupported, 
-    startListening, 
-    stopListening 
+  const {
+    isListening,
+    transcript,
+    isSupported,
+    startListening,
+    stopListening
   } = useSpeechRecognition();
 
-  // Update description when transcript changes
+  // Update description when transcript changes from speech recognition
   useEffect(() => {
     if (transcript) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing external speech input to state
       setDescription(prev => (prev + ' ' + transcript).trim());
     }
   }, [transcript]);
@@ -47,36 +50,38 @@ export function Describe() {
           onClick={() => navigate(-1)}
           className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
-          <span>→</span>
-          <span>חזרה</span>
+          <span>{isRTL ? '→' : '←'}</span>
+          <span>{t.common.back}</span>
         </button>
 
         {child && (
           <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
         )}
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">מה קורה?</h1>
-        <p className="text-purple-700 mb-6 font-medium">תאר בקצרה את הסיטואציה</p>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+          {t.describe.title}
+        </h1>
+        <p className="text-purple-700 mb-6 font-medium">{t.describe.subtitle}</p>
 
         <div className="relative">
           <Textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
-            placeholder="למשל: הילד לא רוצה להתלבש לגן ומתחיל לצרוח..."
+            placeholder={t.describe.placeholder}
             rows={6}
             className="text-lg"
           />
-          
+
           {isSupported && (
             <button
               type="button"
               onClick={isListening ? stopListening : startListening}
-              className={`absolute left-3 bottom-3 p-3 rounded-full transition-all duration-300 shadow-lg ${
-                isListening 
-                  ? 'bg-gradient-to-r from-red-500 to-pink-500 animate-pulse' 
+              className={`absolute ltr:right-3 rtl:left-3 bottom-3 p-3 rounded-full transition-all duration-300 shadow-lg ${
+                isListening
+                  ? 'bg-gradient-to-r from-red-500 to-pink-500 animate-pulse'
                   : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-xl'
               } text-white`}
-              title={isListening ? 'הפסק הקלטה' : 'הקלטה קולית'}
+              title={isListening ? t.describe.stopRecording : t.describe.voiceRecording}
             >
               {isListening ? (
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -94,12 +99,12 @@ export function Describe() {
 
         {isListening && (
           <p className="text-sm text-red-500 mt-2 font-medium animate-pulse">
-            🎤 מקליט...
+            {t.describe.recording}
           </p>
         )}
 
         <p className="text-sm text-purple-400 mt-2 font-medium">
-          {description.length} תווים (מינימום 10)
+          {t.describe.characters.replace('{count}', String(description.length))}
         </p>
 
         <Button
@@ -108,7 +113,7 @@ export function Describe() {
           className="mt-6"
           disabled={!canContinue}
         >
-          המשך
+          {t.common.continue}
         </Button>
       </div>
     </div>
