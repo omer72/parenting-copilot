@@ -20,12 +20,11 @@ export function Home() {
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-md mx-auto w-full">
         <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 drop-shadow-sm">
-            kidsit.ai
-          </h1>
-          <p className="text-purple-700 text-lg font-medium">
-            עזרה מעשית לרגעים מאתגרים עם הילדים
-          </p>
+          <img
+            src="/logo.png"
+            alt="kidsit.ai"
+            className="w-72 h-72 mx-auto object-contain"
+          />
         </div>
 
         <Button
