@@ -14,6 +14,33 @@ export const he = {
     hebrew: 'עברית',
     english: 'English',
   },
+  landing: {
+    title: 'Kidsit.ai',
+    subtitle: 'העוזר החכם להורים ברגעי אמת',
+    enterButton: 'בואו נתחיל',
+    features: [
+      {
+        icon: '🆘',
+        title: 'עזרה מיידית בסיטואציות',
+        description: 'קבלו הנחיות מעשיות ומותאמות אישית ברגע שמתעורר אתגר עם הילד',
+      },
+      {
+        icon: '👶',
+        title: 'מותאם לילד שלכם',
+        description: 'המערכת לומדת את המאפיינים של הילד ומתאימה את העצות בהתאם',
+      },
+      {
+        icon: '📊',
+        title: 'דוח סוף יום',
+        description: 'קבלו תובנות על הדפוסים והאתגרים של היום וטיפים להמשך',
+      },
+      {
+        icon: '🎤',
+        title: 'הקלטה קולית',
+        description: 'תארו את הסיטואציה בקול - גם כשהידיים תפוסות',
+      },
+    ],
+  },
   home: {
     situationButton: 'יש סיטואציה עכשיו',
     myChildren: 'הילדים שלי',

@@ -14,6 +14,33 @@ export const en = {
     hebrew: 'עברית',
     english: 'English',
   },
+  landing: {
+    title: 'Kidsit.ai',
+    subtitle: 'Your smart parenting assistant in real-time',
+    enterButton: "Let's Get Started",
+    features: [
+      {
+        icon: '🆘',
+        title: 'Instant Help in Situations',
+        description: 'Get practical, personalized guidance the moment a challenge arises with your child',
+      },
+      {
+        icon: '👶',
+        title: 'Tailored to Your Child',
+        description: "The system learns your child's characteristics and adapts advice accordingly",
+      },
+      {
+        icon: '📊',
+        title: 'End of Day Report',
+        description: "Get insights on the day's patterns and challenges, plus tips for tomorrow",
+      },
+      {
+        icon: '🎤',
+        title: 'Voice Recording',
+        description: 'Describe situations by voice - even when your hands are full',
+      },
+    ],
+  },
   home: {
     situationButton: "There's a situation now",
     myChildren: 'My Children',

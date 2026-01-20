@@ -122,7 +122,7 @@ export function DailyReport() {
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           className="flex items-center text-purple-600 mb-4"
         >
           <svg
@@ -382,7 +382,7 @@ export function DailyReport() {
           </div>
         )}
 
-        <Button onClick={() => navigate('/')} variant="outline" fullWidth>
+        <Button onClick={() => navigate('/home')} variant="outline" fullWidth>
           {t.common.back}
         </Button>
 

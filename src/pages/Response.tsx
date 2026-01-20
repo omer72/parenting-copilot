@@ -23,13 +23,13 @@ export function Response() {
   useEffect(() => {
     async function fetchResponse() {
       if (!currentSession?.childId || !currentSession?.context || !currentSession?.description) {
-        navigate('/');
+        navigate('/home');
         return;
       }
 
       const childData = getChildById(currentSession.childId);
       if (!childData) {
-        navigate('/');
+        navigate('/home');
         return;
       }
 
@@ -80,7 +80,7 @@ export function Response() {
       saveCurrentInteraction(false);
     }
     setCurrentSession(null);
-    navigate('/');
+    navigate('/home');
   };
 
   const handleHelped = () => {

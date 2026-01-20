@@ -18,7 +18,7 @@ export function SelectChild() {
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/home')}
           className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
         >
           <span>{isRTL ? '→' : '←'}</span>
