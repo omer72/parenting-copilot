@@ -24,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
             title="Home"
           >
             <img
-              src="/kidsit-logo.png"
+              src="/logo.png"
               alt="Home"
               className="w-full h-full object-cover"
             />

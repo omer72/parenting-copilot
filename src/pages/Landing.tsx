@@ -16,9 +16,9 @@ export function Landing() {
         {/* Logo */}
         <div className="mb-6">
           <img
-            src="/kidsit-logo.png"
+            src="/logo.png"
             alt="Kidsit.ai"
-            className="w-32 h-32 mx-auto"
+            className="w-72 h-72 mx-auto object-contain"
           />
         </div>
 
