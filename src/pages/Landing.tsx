@@ -7,7 +7,6 @@ export function Landing() {
   const { t, isRTL } = useTranslation();
 
   const handleEnter = () => {
-    localStorage.setItem('parenting-copilot-visited', 'true');
     navigate('/home');
   };
 
