@@ -49,3 +49,22 @@ export interface AppState {
   children: Child[];
   currentSession: Partial<Session> | null;
 }
+
+export interface CompletedInteraction {
+  id: string;
+  timestamp: Date;
+  childId: string;
+  context: SessionContext;
+  description: string;
+  clarifications: Clarification[];
+  responses: ConversationTurn[];
+  resolved: boolean;
+}
+
+export interface DailyReportResponse {
+  summary: string;
+  patterns: string[];
+  successHighlights: string;
+  areasToWatch: string;
+  tomorrowTips: string[];
+}

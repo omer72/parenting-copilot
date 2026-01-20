@@ -9,7 +9,7 @@ import type { AIResponse, Session, ConversationTurn } from '../types';
 
 export function Response() {
   const navigate = useNavigate();
-  const { currentSession, getChildById, setCurrentSession } = useApp();
+  const { currentSession, getChildById, setCurrentSession, saveInteraction } = useApp();
   const { t, isRTL } = useTranslation();
 
   const [response, setResponse] = useState<AIResponse | null>(null);
@@ -49,23 +49,61 @@ export function Response() {
     fetchResponse();
   }, [currentSession, getChildById, navigate]);
 
+  const saveCurrentInteraction = (resolved: boolean) => {
+    if (response && currentSession?.childId && currentSession?.context && currentSession?.description) {
+      const finalHistory = feedbackState === 'pending'
+        ? [...conversationHistory, { response, timestamp: new Date() }]
+        : conversationHistory;
+
+      saveInteraction({
+        timestamp: new Date(),
+        childId: currentSession.childId,
+        context: currentSession.context,
+        description: currentSession.description,
+        clarifications: currentSession.clarifications || [],
+        responses: finalHistory,
+        resolved
+      });
+    }
+  };
+
   const handleNewSituation = () => {
+    if (feedbackState !== 'helped') {
+      saveCurrentInteraction(false);
+    }
     setCurrentSession(null);
     navigate('/select-child');
   };
 
   const handleHome = () => {
+    if (feedbackState !== 'helped') {
+      saveCurrentInteraction(false);
+    }
     setCurrentSession(null);
     navigate('/');
   };
 
   const handleHelped = () => {
     if (response) {
-      setConversationHistory(prev => [...prev, {
+      const finalTurn: ConversationTurn = {
         response,
         feedback: 'helped',
         timestamp: new Date()
-      }]);
+      };
+      setConversationHistory(prev => [...prev, finalTurn]);
+
+      // Save interaction for daily report
+      if (currentSession?.childId && currentSession?.context && currentSession?.description) {
+        saveInteraction({
+          timestamp: new Date(),
+          childId: currentSession.childId,
+          context: currentSession.context,
+          description: currentSession.description,
+          clarifications: currentSession.clarifications || [],
+          responses: [...conversationHistory, finalTurn],
+          resolved: true
+        });
+      }
     }
     setFeedbackState('helped');
   };

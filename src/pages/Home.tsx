@@ -63,6 +63,17 @@ export function Home() {
             </Button>
           </Card>
         )}
+
+        {children.length > 0 && (
+          <Button
+            variant="outline"
+            fullWidth
+            onClick={() => navigate('/daily-report')}
+            className="flex items-center justify-center gap-2"
+          >
+            {t.home.dailyReport}
+          </Button>
+        )}
       </div>
 
       <footer className="text-center text-sm text-purple-400 mt-8 font-medium">

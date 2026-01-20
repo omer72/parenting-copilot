@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import type { Child, Session, AppState } from '../types';
+import type { Child, Session, AppState, CompletedInteraction } from '../types';
 
 interface AppContextType extends AppState {
   addChild: (child: Omit<Child, 'id'>) => void;
@@ -10,6 +10,9 @@ interface AppContextType extends AppState {
   setCurrentSession: (session: Partial<Session> | null) => void;
   updateSession: (updates: Partial<Session>) => void;
   getChildById: (id: string) => Child | undefined;
+  completedInteractions: CompletedInteraction[];
+  saveInteraction: (interaction: Omit<CompletedInteraction, 'id'>) => void;
+  getInteractionsForDate: (date: string, childId?: string) => CompletedInteraction[];
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -17,6 +20,7 @@ const AppContext = createContext<AppContextType | null>(null);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [savedChildren, setSavedChildren] = useLocalStorage<Child[]>('parenting-copilot-children', []);
   const [currentSession, setCurrentSession] = useLocalStorage<Partial<Session> | null>('parenting-copilot-session', null);
+  const [completedInteractions, setCompletedInteractions] = useLocalStorage<CompletedInteraction[]>('parenting-copilot-interactions', []);
 
   const addChild = (child: Omit<Child, 'id'>) => {
     const newChild: Child = {
@@ -44,6 +48,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return savedChildren.find(child => child.id === id);
   };
 
+  const saveInteraction = (interaction: Omit<CompletedInteraction, 'id'>) => {
+    const newInteraction: CompletedInteraction = {
+      ...interaction,
+      id: crypto.randomUUID(),
+    };
+    setCompletedInteractions(prev => [...prev, newInteraction]);
+  };
+
+  const getInteractionsForDate = (date: string, childId?: string): CompletedInteraction[] => {
+    return completedInteractions.filter(i => {
+      const interactionDate = new Date(i.timestamp).toISOString().split('T')[0];
+      const dateMatch = interactionDate === date;
+      const childMatch = childId ? i.childId === childId : true;
+      return dateMatch && childMatch;
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -55,6 +76,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCurrentSession,
         updateSession,
         getChildById,
+        completedInteractions,
+        saveInteraction,
+        getInteractionsForDate,
       }}
     >
       {children}

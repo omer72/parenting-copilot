@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
-import type { AIResponse, Session, Child, ConversationTurn } from '../types';
+import type { AIResponse, Session, Child, ConversationTurn, DailyReportResponse } from '../types';
 import type { Language } from '../locales';
 import { he } from '../locales/he';
 import { en } from '../locales/en';
@@ -462,3 +462,135 @@ export const contextLabels = {
     anxious: 'חרד',
   },
 };
+
+function getDailyReportFromDescriptionPrompt(
+  description: string,
+  child: Child
+): string {
+  const lang = getCurrentLanguage();
+
+  if (lang === 'he') {
+    return `אתה יועץ הורות מקצועי ומנוסה. הורה מספר לך על היום שלו עם הילד.
+
+מידע על הילד:
+- שם: ${child.name}
+- גיל: ${child.age}
+${child.gender ? `- מין: ${child.gender === 'male' ? 'בן' : 'בת'}` : ''}
+${child.characteristics ? `- מאפיינים: ${child.characteristics}` : ''}
+
+תיאור היום מההורה:
+${description}
+
+אנא נתח את היום ותן תובנות בפורמט JSON הבא:
+{
+  "summary": "סיכום קצר של היום מנקודת מבט מקצועית (2-3 משפטים)",
+  "patterns": ["דפוס התנהגותי שזיהית", "דפוס נוסף אם רלוונטי"],
+  "successHighlights": "מה ההורה עשה טוב היום - חזק אותו! (2-3 משפטים)",
+  "areasToWatch": "נקודה אחת לשים לב אליה או לשפר (2-3 משפטים)",
+  "tomorrowTips": ["טיפ מעשי 1", "טיפ מעשי 2", "טיפ מעשי 3"]
+}
+
+חשוב:
+- היה חיובי ומעודד
+- התמקד בדברים הטובים שההורה עשה
+- תן טיפים מעשיים וספציפיים
+- התאם את התובנות לגיל הילד
+- החזר רק את ה-JSON, ללא טקסט נוסף`;
+  } else {
+    return `You are a professional and experienced parenting consultant. A parent is telling you about their day with their child.
+
+Information about the child:
+- Name: ${child.name}
+- Age: ${child.age}
+${child.gender ? `- Gender: ${child.gender === 'male' ? 'Boy' : 'Girl'}` : ''}
+${child.characteristics ? `- Characteristics: ${child.characteristics}` : ''}
+
+Parent's description of the day:
+${description}
+
+Please analyze the day and provide insights in the following JSON format:
+{
+  "summary": "Brief professional summary of the day (2-3 sentences)",
+  "patterns": ["Behavioral pattern you identified", "Another pattern if relevant"],
+  "successHighlights": "What the parent did well today - encourage them! (2-3 sentences)",
+  "areasToWatch": "One area to pay attention to or improve (2-3 sentences)",
+  "tomorrowTips": ["Practical tip 1", "Practical tip 2", "Practical tip 3"]
+}
+
+Important:
+- Be positive and encouraging
+- Focus on the good things the parent did
+- Give practical and specific tips
+- Tailor insights to the child's age
+- Return only the JSON, no additional text`;
+  }
+}
+
+function getMockDailyReport(interactionCount: number): DailyReportResponse {
+  const t = getTranslations();
+  const mockReports = t.mockResponses.dailyReport as {
+    noInteractions: DailyReportResponse;
+    fewInteractions: DailyReportResponse;
+    manyInteractions: DailyReportResponse;
+  };
+
+  if (interactionCount === 0) {
+    return mockReports.noInteractions;
+  } else if (interactionCount <= 3) {
+    return mockReports.fewInteractions;
+  } else {
+    return mockReports.manyInteractions;
+  }
+}
+
+export async function generateDailyReportFromDescription(
+  description: string,
+  child: Child
+): Promise<DailyReportResponse> {
+  const hasOpenAI = import.meta.env.VITE_OPENAI_API_KEY &&
+                    import.meta.env.VITE_OPENAI_API_KEY !== 'your_openai_api_key_here';
+  const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
+                    import.meta.env.VITE_ANTHROPIC_API_KEY !== 'your_anthropic_api_key_here';
+
+  if (!hasOpenAI && !hasClaude) {
+    console.warn('No AI API key configured, using mock daily report');
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
+    return getMockDailyReport(description.length > 200 ? 5 : 2);
+  }
+
+  const prompt = getDailyReportFromDescriptionPrompt(description, child);
+
+  try {
+    if (hasOpenAI) {
+      const openai = getOpenAIClient();
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
+        max_tokens: 1024,
+      });
+      const content = completion.choices[0].message.content;
+      if (content) {
+        return JSON.parse(content);
+      }
+    } else if (hasClaude) {
+      const anthropic = getAnthropicClient();
+      const message = await anthropic.messages.create({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
+      });
+      const textContent = message.content[0];
+      if (textContent.type === 'text') {
+        const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          return JSON.parse(jsonMatch[0]);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error generating daily report:', error);
+  }
+
+  return getMockDailyReport(description.length > 200 ? 5 : 2);
+}

@@ -7,6 +7,7 @@ import { Context } from './pages/Context'
 import { Describe } from './pages/Describe'
 import { Clarification } from './pages/Clarification'
 import { Response } from './pages/Response'
+import { DailyReport } from './pages/DailyReport'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/describe" element={<Describe />} />
         <Route path="/clarification" element={<Clarification />} />
         <Route path="/response" element={<Response />} />
+        <Route path="/daily-report" element={<DailyReport />} />
       </Routes>
     </Layout>
   )
