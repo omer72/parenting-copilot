@@ -8,7 +8,7 @@ export const en = {
     loading: 'Loading...',
     age: 'Age',
     ageValue: 'Age {age}',
-    disclaimer: 'Not a substitute for professional advice',
+    disclaimer: 'This app is not a substitute for professional, medical, or psychological advice.\nIt is designed to provide parents with smart, sensitive, and practical guidance for dealing with everyday situations in real-time.',
     settings: 'Settings',
     language: 'Language',
     hebrew: 'עברית',
