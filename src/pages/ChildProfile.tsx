@@ -9,13 +9,14 @@ import type { ParentingMethod } from '../types';
 
 const PARENTING_METHODS: ParentingMethod[] = ['positive', 'authoritative', 'attachment', 'montessori', 'respectful'];
 
-export function EditChild() {
+export function ChildProfile() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { getChildById, updateChild, deleteChild } = useApp();
+  const { addChild, updateChild, deleteChild, getChildById, updateSession } = useApp();
   const { t, isRTL } = useTranslation();
 
-  const child = id ? getChildById(id) : undefined;
+  const isEditMode = !!id;
+  const child = isEditMode ? getChildById(id) : undefined;
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -28,8 +29,9 @@ export function EditChild() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
 
+  // Load existing child data in edit mode
   useEffect(() => {
-    if (child) {
+    if (isEditMode && child) {
       setName(child.name);
       setAge(String(child.age));
       setGender(child.gender);
@@ -37,10 +39,10 @@ export function EditChild() {
       setNotes(child.notes || '');
       setParentingMethod(child.parentingMethod);
     }
-  }, [child]);
+  }, [isEditMode, child]);
 
   const hasUnsavedChanges = () => {
-    if (!child) return false;
+    if (!isEditMode || !child) return false;
     return (
       name !== child.name ||
       age !== String(child.age) ||
@@ -51,35 +53,70 @@ export function EditChild() {
     );
   };
 
+  const validateForm = () => {
+    const newErrors: { name?: string; age?: string } = {};
+    if (!name.trim()) newErrors.name = t.addChild.requiredField;
+    if (!age || parseInt(age) < 0 || parseInt(age) > 18) {
+      newErrors.age = t.addChild.ageError;
+    }
+    return newErrors;
+  };
+
   const handleBack = () => {
-    if (hasUnsavedChanges()) {
+    if (isEditMode && hasUnsavedChanges()) {
       setShowUnsavedChanges(true);
     } else {
       navigate(-1);
     }
   };
 
-  const handleSaveAndLeave = () => {
-    const newErrors: { name?: string; age?: string } = {};
-    if (!name.trim()) newErrors.name = t.addChild.requiredField;
-    if (!age || parseInt(age) < 0 || parseInt(age) > 18) {
-      newErrors.age = t.addChild.ageError;
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
+    const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setShowUnsavedChanges(false);
       return;
     }
 
-    updateChild(id!, {
+    const childData = {
       name: name.trim(),
       age: parseInt(age),
       gender,
       characteristics: characteristics.trim(),
       notes: notes.trim() || undefined,
       parentingMethod,
-    });
+    };
+
+    if (isEditMode && id) {
+      updateChild(id, childData);
+      navigate('/home');
+    } else {
+      addChild(childData);
+      // Get the newly added child's ID from context (last added)
+      updateSession({ childId: undefined }); // Will be set by addChild
+      navigate('/context');
+    }
+  };
+
+  const handleSaveAndLeave = () => {
+    const newErrors = validateForm();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setShowUnsavedChanges(false);
+      return;
+    }
+
+    if (isEditMode && id) {
+      updateChild(id, {
+        name: name.trim(),
+        age: parseInt(age),
+        gender,
+        characteristics: characteristics.trim(),
+        notes: notes.trim() || undefined,
+        parentingMethod,
+      });
+    }
 
     navigate(-1);
   };
@@ -88,7 +125,15 @@ export function EditChild() {
     navigate(-1);
   };
 
-  if (!child || !id) {
+  const handleDelete = () => {
+    if (id) {
+      deleteChild(id);
+      navigate('/home');
+    }
+  };
+
+  // Handle not found in edit mode
+  if (isEditMode && !child) {
     return (
       <div className="min-h-screen p-4 flex items-center justify-center">
         <div className="text-center">
@@ -98,37 +143,6 @@ export function EditChild() {
       </div>
     );
   }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const newErrors: { name?: string; age?: string } = {};
-    if (!name.trim()) newErrors.name = t.addChild.requiredField;
-    if (!age || parseInt(age) < 0 || parseInt(age) > 18) {
-      newErrors.age = t.addChild.ageError;
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    updateChild(id, {
-      name: name.trim(),
-      age: parseInt(age),
-      gender,
-      characteristics: characteristics.trim(),
-      notes: notes.trim() || undefined,
-      parentingMethod,
-    });
-
-    navigate('/home');
-  };
-
-  const handleDelete = () => {
-    deleteChild(id);
-    navigate('/home');
-  };
 
   return (
     <div className="min-h-screen p-4">
@@ -141,6 +155,7 @@ export function EditChild() {
           <span>{t.common.back}</span>
         </button>
 
+        {/* Unsaved changes dialog - edit mode only */}
         {showUnsavedChanges && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
@@ -170,7 +185,7 @@ export function EditChild() {
         )}
 
         <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-          {t.editChild.title}
+          {isEditMode ? t.editChild.title : t.addChild.title}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -247,44 +262,47 @@ export function EditChild() {
           </div>
 
           <Button type="submit" fullWidth className="mt-6">
-            {t.common.save}
+            {isEditMode ? t.common.save : t.addChild.saveAndContinue}
           </Button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          {!showDeleteConfirm ? (
-            <Button
-              variant="outline"
-              fullWidth
-              onClick={() => setShowDeleteConfirm(true)}
-              className="text-red-500 border-red-200 hover:bg-red-50"
-            >
-              {t.editChild.deleteChild}
-            </Button>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-center text-sm text-gray-600">
-                {t.editChild.deleteConfirm}
-              </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={() => setShowDeleteConfirm(false)}
-                >
-                  {t.common.cancel}
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={handleDelete}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  {t.editChild.confirmDelete}
-                </Button>
+        {/* Delete section - edit mode only */}
+        {isEditMode && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            {!showDeleteConfirm ? (
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => setShowDeleteConfirm(true)}
+                className="text-red-500 border-red-200 hover:bg-red-50"
+              >
+                {t.editChild.deleteChild}
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-center text-sm text-gray-600">
+                  {t.editChild.deleteConfirm}
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    {t.common.cancel}
+                  </Button>
+                  <Button
+                    fullWidth
+                    onClick={handleDelete}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    {t.editChild.confirmDelete}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

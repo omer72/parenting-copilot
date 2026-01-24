@@ -51,7 +51,7 @@ export function SelectChild() {
           variant="outline"
           fullWidth
           className="mt-6"
-          onClick={() => navigate('/add-child')}
+          onClick={() => navigate('/child')}
         >
           {t.selectChild.addNewChild}
         </Button>

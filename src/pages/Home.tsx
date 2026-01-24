@@ -12,7 +12,7 @@ export function Home() {
   const handleNewSituation = () => {
     setCurrentSession(null);
     if (children.length === 0) {
-      navigate('/add-child');
+      navigate('/child');
     } else {
       navigate('/select-child');
     }
@@ -53,7 +53,7 @@ export function Home() {
                     </span>
                   </div>
                   <button
-                    onClick={() => navigate(`/edit-child/${child.id}`)}
+                    onClick={() => navigate(`/child/${child.id}`)}
                     className="text-purple-400 hover:text-purple-600 transition-colors p-1"
                     title={t.editChild.title}
                   >
@@ -68,7 +68,7 @@ export function Home() {
               variant="outline"
               fullWidth
               className="mt-3"
-              onClick={() => navigate('/add-child')}
+              onClick={() => navigate('/child')}
             >
               {t.home.addChild}
             </Button>
