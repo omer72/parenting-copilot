@@ -1,3 +1,5 @@
+export type ParentingMethod = 'positive' | 'authoritative' | 'attachment' | 'montessori' | 'respectful';
+
 export interface Child {
   id: string;
   name: string;
@@ -5,6 +7,7 @@ export interface Child {
   gender?: 'male' | 'female';
   characteristics: string;
   notes?: string;
+  parentingMethod?: ParentingMethod;
 }
 
 export type Location = 'home' | 'street' | 'car' | 'mall' | 'restaurant';

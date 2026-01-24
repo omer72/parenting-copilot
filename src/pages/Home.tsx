@@ -46,10 +46,21 @@ export function Home() {
                   key={child.id}
                   className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
                 >
-                  <span className="font-semibold text-purple-900">{child.name}</span>
-                  <span className="text-purple-600 text-sm font-medium">
-                    {t.common.ageValue.replace('{age}', String(child.age))}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-purple-900">{child.name}</span>
+                    <span className="text-purple-600 text-sm font-medium">
+                      {t.common.ageValue.replace('{age}', String(child.age))}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => navigate(`/edit-child/${child.id}`)}
+                    className="text-purple-400 hover:text-purple-600 transition-colors p-1"
+                    title={t.editChild.title}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                  </button>
                 </div>
               ))}
             </div>

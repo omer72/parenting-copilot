@@ -4,6 +4,7 @@ import { Landing } from './pages/Landing'
 import { Home } from './pages/Home'
 import { SelectChild } from './pages/SelectChild'
 import { AddChild } from './pages/AddChild'
+import { EditChild } from './pages/EditChild'
 import { Context } from './pages/Context'
 import { Describe } from './pages/Describe'
 import { Clarification } from './pages/Clarification'
@@ -18,6 +19,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/select-child" element={<SelectChild />} />
         <Route path="/add-child" element={<AddChild />} />
+        <Route path="/edit-child/:id" element={<EditChild />} />
         <Route path="/context" element={<Context />} />
         <Route path="/describe" element={<Describe />} />
         <Route path="/clarification" element={<Clarification />} />
