@@ -15,7 +15,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="relative">
-      <div className="fixed top-4 left-4 z-50 flex items-center gap-2">
+      <div className="fixed left-4 z-50 flex items-center gap-2" style={{ top: 'calc(env(safe-area-inset-top) + 16px)' }}>
         <SettingsButton />
         {showLogo && (
           <button

@@ -11,14 +11,14 @@ export function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-purple-50 to-pink-50">
-      <div className="max-w-md w-full text-center">
+    <div className="min-h-screen flex flex-col items-center p-6 pb-8 overflow-auto">
+      <div className="max-w-md w-full text-center flex-1 flex flex-col justify-center">
         {/* Logo */}
         <div className="mb-6">
           <img
             src="/logo.png"
             alt="Kidsit.ai"
-            className="w-72 h-72 mx-auto object-contain"
+            className="w-48 h-48 mx-auto object-contain"
           />
         </div>
 
