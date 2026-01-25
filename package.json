@@ -7,10 +7,19 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cap:build": "npm run build && npx cap sync",
+    "cap:ios": "npm run cap:build && npx cap open ios",
+    "cap:android": "npm run cap:build && npx cap open android"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
+    "@capacitor/android": "^8.0.1",
+    "@capacitor/cli": "^8.0.1",
+    "@capacitor/core": "^8.0.1",
+    "@capacitor/ios": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "openai": "^6.15.0",
     "react": "^19.2.0",
