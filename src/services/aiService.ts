@@ -57,7 +57,9 @@ async function callOpenAIViaProxy(messages: { role: string; content: string }[],
 function shouldUseProxy(): boolean {
   // Use proxy in production web (not native Capacitor)
   const isProd = !import.meta.env.DEV;
-  const isNative = typeof (window as unknown as { Capacitor?: unknown }).Capacitor !== 'undefined';
+  // Check if running as native app using Capacitor's isNativePlatform
+  const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  const isNative = cap?.isNativePlatform?.() ?? false;
   return isProd && !isNative;
 }
 
