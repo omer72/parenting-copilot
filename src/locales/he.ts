@@ -124,6 +124,7 @@ export const he = {
     stopRecording: 'הפסק הקלטה',
     voiceRecording: 'הקלטה קולית',
     recording: 'מקליט...',
+    transcribing: 'מתמלל...',
     characters: '{count} תווים (מינימום 10)',
   },
   clarification: {

@@ -18,6 +18,7 @@ export function Describe() {
     isListening,
     transcript,
     isSupported,
+    isTranscribing,
     startListening,
     stopListening
   } = useSpeechRecognition();
@@ -76,14 +77,22 @@ export function Describe() {
             <button
               type="button"
               onClick={isListening ? stopListening : startListening}
+              disabled={isTranscribing}
               className={`absolute ltr:right-3 rtl:left-3 bottom-3 p-3 rounded-full transition-all duration-300 shadow-lg ${
-                isListening
+                isTranscribing
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse'
+                  : isListening
                   ? 'bg-gradient-to-r from-red-500 to-pink-500 animate-pulse'
                   : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-xl'
-              } text-white`}
-              title={isListening ? t.describe.stopRecording : t.describe.voiceRecording}
+              } text-white disabled:opacity-75`}
+              title={isTranscribing ? t.describe.transcribing : isListening ? t.describe.stopRecording : t.describe.voiceRecording}
             >
-              {isListening ? (
+              {isTranscribing ? (
+                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                </svg>
+              ) : isListening ? (
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <rect x="7" y="5" width="6" height="10" rx="1" />
                 </svg>
@@ -97,9 +106,9 @@ export function Describe() {
           )}
         </div>
 
-        {isListening && (
-          <p className="text-sm text-red-500 mt-2 font-medium animate-pulse">
-            {t.describe.recording}
+        {(isListening || isTranscribing) && (
+          <p className={`text-sm mt-2 font-medium animate-pulse ${isTranscribing ? 'text-blue-500' : 'text-red-500'}`}>
+            {isTranscribing ? t.describe.transcribing : t.describe.recording}
           </p>
         )}
 

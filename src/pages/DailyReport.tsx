@@ -26,7 +26,7 @@ export function DailyReport() {
   const navigate = useNavigate();
   const { children } = useApp();
   const { t, isRTL } = useTranslation();
-  const { isListening, transcript, isSupported, startListening, stopListening } = useSpeechRecognition();
+  const { isListening, transcript, isSupported, isTranscribing, startListening, stopListening } = useSpeechRecognition();
 
   const [selectedChildId, setSelectedChildId] = useState<string>(
     children.length > 0 ? children[0].id : ''
@@ -294,23 +294,33 @@ export function DailyReport() {
                   <button
                     type="button"
                     onClick={isListening ? stopListening : startListening}
+                    disabled={isTranscribing}
                     className={`absolute ${isRTL ? 'left-2' : 'right-2'} bottom-2 p-2 rounded-full transition-colors ${
-                      isListening
+                      isTranscribing
+                        ? 'bg-blue-500 text-white animate-pulse'
+                        : isListening
                         ? 'bg-red-500 text-white animate-pulse'
                         : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                    }`}
-                    title={isListening ? t.describe.stopRecording : t.describe.voiceRecording}
+                    } disabled:opacity-75`}
+                    title={isTranscribing ? t.describe.transcribing : isListening ? t.describe.stopRecording : t.describe.voiceRecording}
                   >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
-                      <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                    </svg>
+                    {isTranscribing ? (
+                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
+                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                      </svg>
+                    )}
                   </button>
                 )}
               </div>
-              {isListening && (
-                <p className="text-sm text-red-500 mt-2 animate-pulse">
-                  {t.describe.recording}
+              {(isListening || isTranscribing) && (
+                <p className={`text-sm mt-2 animate-pulse ${isTranscribing ? 'text-blue-500' : 'text-red-500'}`}>
+                  {isTranscribing ? t.describe.transcribing : t.describe.recording}
                 </p>
               )}
               <p className="text-sm text-gray-500 mt-2">

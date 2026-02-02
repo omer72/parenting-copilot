@@ -124,6 +124,7 @@ export const en = {
     stopRecording: 'Stop recording',
     voiceRecording: 'Voice recording',
     recording: 'Recording...',
+    transcribing: 'Transcribing...',
     characters: '{count} characters (minimum 10)',
   },
   clarification: {
