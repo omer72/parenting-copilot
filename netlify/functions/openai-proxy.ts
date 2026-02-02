@@ -6,7 +6,7 @@ export default async (request: Request, context: Context) => {
     return new Response('Method not allowed', { status: 405 });
   }
 
-  const apiKey = Netlify.env.get('OPENAI_API_KEY');
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'OpenAI API key not configured' }), {
       status: 500,
