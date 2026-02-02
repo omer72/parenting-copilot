@@ -21,12 +21,44 @@ function getAnthropicClient(): Anthropic {
 
 function getOpenAIClient(): OpenAI {
   if (!openaiClient) {
+    // Use proxy in development to avoid CORS issues
+    const isDev = import.meta.env.DEV;
     openaiClient = new OpenAI({
       apiKey: import.meta.env.VITE_OPENAI_API_KEY || 'dummy-key',
       dangerouslyAllowBrowser: true,
+      ...(isDev && { baseURL: `${window.location.origin}/api/openai/v1` }),
     });
   }
   return openaiClient;
+}
+
+// For production web, use Netlify function to avoid CORS
+async function callOpenAIViaProxy(messages: { role: string; content: string }[], jsonMode = false): Promise<string> {
+  const response = await fetch('/.netlify/functions/openai-proxy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages,
+      max_tokens: 1024,
+      ...(jsonMode && { response_format: { type: 'json_object' } }),
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'OpenAI proxy request failed');
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+function shouldUseProxy(): boolean {
+  // Use proxy in production web (not native Capacitor)
+  const isProd = !import.meta.env.DEV;
+  const isNative = typeof (window as unknown as { Capacitor?: unknown }).Capacitor !== 'undefined';
+  return isProd && !isNative;
 }
 
 function getCurrentLanguage(): Language {
@@ -289,20 +321,21 @@ async function generateWithOpenAI(
 ): Promise<AIResponse> {
   const prompt = getPromptForLanguage(session, child);
 
-  const openai = getOpenAIClient();
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-    response_format: { type: 'json_object' },
-    max_tokens: 1024,
-  });
+  let content: string | null;
 
-  const content = completion.choices[0].message.content;
+  if (shouldUseProxy()) {
+    content = await callOpenAIViaProxy([{ role: 'user', content: prompt }], true);
+  } else {
+    const openai = getOpenAIClient();
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      max_tokens: 1024,
+    });
+    content = completion.choices[0].message.content;
+  }
+
   if (!content) {
     throw new Error('No response from OpenAI');
   }
@@ -380,14 +413,19 @@ export async function generateFollowUpResponse(
 
   try {
     if (hasOpenAI) {
-      const openai = getOpenAIClient();
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: followUpPrompt }],
-        response_format: { type: 'json_object' },
-        max_tokens: 1024,
-      });
-      const content = completion.choices[0].message.content;
+      let content: string | null;
+      if (shouldUseProxy()) {
+        content = await callOpenAIViaProxy([{ role: 'user', content: followUpPrompt }], true);
+      } else {
+        const openai = getOpenAIClient();
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [{ role: 'user', content: followUpPrompt }],
+          response_format: { type: 'json_object' },
+          max_tokens: 1024,
+        });
+        content = completion.choices[0].message.content;
+      }
       if (content) {
         return JSON.parse(content);
       }
@@ -562,14 +600,19 @@ export async function generateDailyReportFromDescription(
 
   try {
     if (hasOpenAI) {
-      const openai = getOpenAIClient();
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        max_tokens: 1024,
-      });
-      const content = completion.choices[0].message.content;
+      let content: string | null;
+      if (shouldUseProxy()) {
+        content = await callOpenAIViaProxy([{ role: 'user', content: prompt }], true);
+      } else {
+        const openai = getOpenAIClient();
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [{ role: 'user', content: prompt }],
+          response_format: { type: 'json_object' },
+          max_tokens: 1024,
+        });
+        content = completion.choices[0].message.content;
+      }
       if (content) {
         return JSON.parse(content);
       }
