@@ -33,3 +33,6 @@ ios/App/Pods/
 android/.gradle/
 android/app/build/
 android/local.properties
+
+# Local Netlify folder
+.netlify

@@ -1,0 +1,40 @@
+PODS:
+  - Capacitor (8.0.1):
+    - CapacitorCordova
+  - CapacitorCordova (8.0.1)
+  - CapacitorSplashScreen (8.0.0):
+    - Capacitor
+  - CapacitorStatusBar (8.0.0):
+    - Capacitor
+  - CapacitorVoiceRecorder (7.0.6):
+    - Capacitor
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - CapacitorVoiceRecorder (from `../../node_modules/capacitor-voice-recorder`)
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
+  CapacitorVoiceRecorder:
+    :path: "../../node_modules/capacitor-voice-recorder"
+
+SPEC CHECKSUMS:
+  Capacitor: ff35b0f66370b84aa238251b35b91886a3207c16
+  CapacitorCordova: 0d65b9bb74e995dcecb9463f34f1af2aba6f955c
+  CapacitorSplashScreen: 422880d7117605c30699eb4b21644b62db42e86c
+  CapacitorStatusBar: 312e2e67928dfe9514c4a8916a1fd610552f5f35
+  CapacitorVoiceRecorder: 9158861be982f32d411769723a4d813d6ce46135
+
+PODFILE CHECKSUM: fe09b7bd30cc42bf6b123ad9afb81b2ddeec26c3
+
+COCOAPODS: 1.15.2
