@@ -17,22 +17,41 @@ interface AppContextType extends AppState {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+// Sanitize string input to prevent XSS - defense in depth
+function sanitizeString(str: string): string {
+  return str
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+function sanitizeChild<T extends Partial<Child>>(child: T): T {
+  const sanitized = { ...child };
+  if (sanitized.name) sanitized.name = sanitizeString(sanitized.name);
+  if (sanitized.characteristics) sanitized.characteristics = sanitizeString(sanitized.characteristics);
+  if (sanitized.notes) sanitized.notes = sanitizeString(sanitized.notes);
+  return sanitized;
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [savedChildren, setSavedChildren] = useLocalStorage<Child[]>('parenting-copilot-children', []);
   const [currentSession, setCurrentSession] = useLocalStorage<Partial<Session> | null>('parenting-copilot-session', null);
   const [completedInteractions, setCompletedInteractions] = useLocalStorage<CompletedInteraction[]>('parenting-copilot-interactions', []);
 
   const addChild = (child: Omit<Child, 'id'>) => {
+    const sanitized = sanitizeChild(child);
     const newChild: Child = {
-      ...child,
+      ...sanitized,
       id: crypto.randomUUID(),
     };
     setSavedChildren(prev => [...prev, newChild]);
   };
 
   const updateChild = (id: string, updates: Partial<Child>) => {
+    const sanitized = sanitizeChild(updates);
     setSavedChildren(prev =>
-      prev.map(child => (child.id === id ? { ...child, ...updates } : child))
+      prev.map(child => (child.id === id ? { ...child, ...sanitized } : child))
     );
   };
 
