@@ -63,6 +63,17 @@ function shouldUseProxy(): boolean {
   return isProd && !isNative;
 }
 
+// Check if OpenAI is available (via proxy in prod, or via API key in dev/native)
+function hasOpenAIAccess(): boolean {
+  if (shouldUseProxy()) {
+    // In production web, we use the Netlify proxy - API key is server-side
+    return true;
+  }
+  // In dev or native, we need the client-side API key
+  const key = import.meta.env.VITE_OPENAI_API_KEY;
+  return !!key && key !== 'your_openai_api_key_here';
+}
+
 function getCurrentLanguage(): Language {
   const saved = localStorage.getItem('parenting-copilot-language');
   return (saved === 'en' || saved === 'he') ? saved : 'he';
@@ -356,8 +367,7 @@ export async function generateResponse(
   session: Session,
   child: Child
 ): Promise<AIResponse> {
-  const hasOpenAI = import.meta.env.VITE_OPENAI_API_KEY &&
-                    import.meta.env.VITE_OPENAI_API_KEY !== 'your_openai_api_key_here';
+  const hasOpenAI = hasOpenAIAccess();
   const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
                     import.meta.env.VITE_ANTHROPIC_API_KEY !== 'your_anthropic_api_key_here';
 
@@ -400,8 +410,7 @@ export async function generateFollowUpResponse(
   conversationHistory: ConversationTurn[],
   feedback: string
 ): Promise<AIResponse> {
-  const hasOpenAI = import.meta.env.VITE_OPENAI_API_KEY &&
-                    import.meta.env.VITE_OPENAI_API_KEY !== 'your_openai_api_key_here';
+  const hasOpenAI = hasOpenAIAccess();
   const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
                     import.meta.env.VITE_ANTHROPIC_API_KEY !== 'your_anthropic_api_key_here';
 
@@ -587,8 +596,7 @@ export async function generateDailyReportFromDescription(
   description: string,
   child: Child
 ): Promise<DailyReportResponse> {
-  const hasOpenAI = import.meta.env.VITE_OPENAI_API_KEY &&
-                    import.meta.env.VITE_OPENAI_API_KEY !== 'your_openai_api_key_here';
+  const hasOpenAI = hasOpenAIAccess();
   const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
                     import.meta.env.VITE_ANTHROPIC_API_KEY !== 'your_anthropic_api_key_here';
 
