@@ -91,6 +91,7 @@ export function Landing() {
               key={index}
               sx={{
                 display: 'flex',
+                flexDirection: isRTL ? 'row-reverse' : 'row',
                 alignItems: 'flex-start',
                 gap: 1.5,
               }}
