@@ -1,5 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Container,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Divider,
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Button } from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
 import { Chip } from '../components/ui/Chip';
@@ -29,7 +41,6 @@ export function ChildProfile() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
 
-  // Load existing child data in edit mode
   useEffect(() => {
     if (isEditMode && child) {
       setName(child.name);
@@ -93,8 +104,7 @@ export function ChildProfile() {
       navigate('/home');
     } else {
       addChild(childData);
-      // Get the newly added child's ID from context (last added)
-      updateSession({ childId: undefined }); // Will be set by addChild
+      updateSession({ childId: undefined });
       navigate('/context');
     }
   };
@@ -132,67 +142,99 @@ export function ChildProfile() {
     }
   };
 
-  // Handle not found in edit mode
   if (isEditMode && !child) {
     return (
-      <div className="min-h-screen p-4 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500 mb-4">{t.editChild.notFound}</p>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography color="text.secondary" sx={{ mb: 2 }}>
+            {t.editChild.notFound}
+          </Typography>
           <Button onClick={() => navigate('/home')}>{t.common.back}</Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <button
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
+        <Box
+          component="button"
           onClick={handleBack}
-          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'primary.main',
+            fontWeight: 500,
+            mb: 2,
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            transition: 'color 0.2s',
+            '&:hover': { color: 'primary.dark' },
+          }}
         >
-          <span>{isRTL ? '→' : '←'}</span>
+          {isRTL ? <ArrowForwardIcon fontSize="small" /> : <ArrowBackIcon fontSize="small" />}
           <span>{t.common.back}</span>
-        </button>
+        </Box>
 
-        {/* Unsaved changes dialog - edit mode only */}
-        {showUnsavedChanges && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
-              <h3 className="text-lg font-bold text-purple-800 mb-2">
-                {t.editChild.unsavedChangesTitle}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {t.editChild.unsavedChangesMessage}
-              </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={handleDiscardAndLeave}
-                >
-                  {t.editChild.discardChanges}
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={handleSaveAndLeave}
-                >
-                  {t.common.save}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Unsaved changes dialog */}
+        <Dialog
+          open={showUnsavedChanges}
+          onClose={() => setShowUnsavedChanges(false)}
+          PaperProps={{ sx: { borderRadius: 4, p: 1 } }}
+        >
+          <DialogTitle sx={{ fontWeight: 700, color: 'primary.dark' }}>
+            {t.editChild.unsavedChangesTitle}
+          </DialogTitle>
+          <DialogContent>
+            <Typography color="text.secondary">
+              {t.editChild.unsavedChangesMessage}
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+            <Button variant="outline" onClick={handleDiscardAndLeave} fullWidth>
+              {t.editChild.discardChanges}
+            </Button>
+            <Button onClick={handleSaveAndLeave} fullWidth>
+              {t.common.save}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 3,
+          }}
+        >
           {isEditMode ? t.editChild.title : t.addChild.title}
-        </h1>
+        </Typography>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
           <Input
             label={t.addChild.childName}
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             error={errors.name}
             placeholder={t.addChild.enterName}
           />
@@ -203,16 +245,19 @@ export function ChildProfile() {
             min={0}
             max={18}
             value={age}
-            onChange={e => setAge(e.target.value)}
+            onChange={(e) => setAge(e.target.value)}
             error={errors.age}
             placeholder={t.addChild.agePlaceholder}
           />
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">
+          <Box>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}
+            >
               {t.addChild.genderOptional}
-            </label>
-            <div className="flex gap-2">
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
                 label={t.addChild.boy}
                 selected={gender === 'male'}
@@ -223,13 +268,13 @@ export function ChildProfile() {
                 selected={gender === 'female'}
                 onClick={() => setGender(gender === 'female' ? undefined : 'female')}
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           <Textarea
             label={t.addChild.characteristics}
             value={characteristics}
-            onChange={e => setCharacteristics(e.target.value)}
+            onChange={(e) => setCharacteristics(e.target.value)}
             placeholder={t.addChild.characteristicsPlaceholder}
             rows={3}
           />
@@ -237,53 +282,72 @@ export function ChildProfile() {
           <Textarea
             label={t.addChild.notesOptional}
             value={notes}
-            onChange={e => setNotes(e.target.value)}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder={t.addChild.notesPlaceholder}
             rows={2}
           />
 
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">
+          <Box>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}
+            >
               {t.editChild.parentingMethod}
-            </label>
-            <p className="text-xs text-gray-500 mb-3">
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.secondary', display: 'block', mb: 1.5 }}
+            >
               {t.editChild.parentingMethodDescription}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {PARENTING_METHODS.map(method => (
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {PARENTING_METHODS.map((method) => (
                 <Chip
                   key={method}
                   label={t.editChild.methods[method]}
                   selected={parentingMethod === method}
-                  onClick={() => setParentingMethod(parentingMethod === method ? undefined : method)}
+                  onClick={() =>
+                    setParentingMethod(parentingMethod === method ? undefined : method)
+                  }
                 />
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <Button type="submit" fullWidth className="mt-6">
+          <Button type="submit" fullWidth sx={{ mt: 2 }}>
             {isEditMode ? t.common.save : t.addChild.saveAndContinue}
           </Button>
-        </form>
+        </Box>
 
-        {/* Delete section - edit mode only */}
+        {/* Delete section */}
         {isEditMode && (
-          <div className="mt-8 pt-6 border-t border-gray-200">
+          <Box sx={{ mt: 4, pt: 3 }}>
+            <Divider sx={{ mb: 3 }} />
             {!showDeleteConfirm ? (
               <Button
                 variant="outline"
                 fullWidth
                 onClick={() => setShowDeleteConfirm(true)}
-                className="text-red-500 border-red-200 hover:bg-red-50"
+                sx={{
+                  color: 'error.main',
+                  borderColor: 'error.light',
+                  '&:hover': {
+                    bgcolor: 'error.light',
+                    borderColor: 'error.main',
+                  },
+                }}
               >
                 {t.editChild.deleteChild}
               </Button>
             ) : (
-              <div className="space-y-3">
-                <p className="text-center text-sm text-gray-600">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ textAlign: 'center', color: 'text.secondary' }}
+                >
                   {t.editChild.deleteConfirm}
-                </p>
-                <div className="flex gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                   <Button
                     variant="outline"
                     fullWidth
@@ -294,16 +358,21 @@ export function ChildProfile() {
                   <Button
                     fullWidth
                     onClick={handleDelete}
-                    className="bg-red-500 hover:bg-red-600"
+                    sx={{
+                      background: 'error.main',
+                      '&:hover': {
+                        background: 'error.dark',
+                      },
+                    }}
                   >
                     {t.editChild.confirmDelete}
                   </Button>
-                </div>
-              </div>
+                </Box>
+              </Box>
             )}
-          </div>
+          </Box>
         )}
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 }

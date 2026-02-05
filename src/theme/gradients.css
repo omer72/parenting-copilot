@@ -1,0 +1,46 @@
+/* Gradient definitions for MUI components */
+:root {
+  --gradient-primary: linear-gradient(to right, #8b5cf6, #ec4899);
+  --gradient-primary-hover: linear-gradient(to right, #7c3aed, #db2777);
+  --gradient-secondary: linear-gradient(to right, #fde68a, #fed7aa);
+  --gradient-secondary-hover: linear-gradient(to right, #fcd34d, #fdba74);
+  --gradient-background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 25%, #f3e8ff 50%, #e9d5ff 100%);
+  --gradient-recording: linear-gradient(to right, #ef4444, #ec4899);
+  --gradient-transcribing: linear-gradient(to right, #3b82f6, #8b5cf6);
+}
+
+/* Gradient text helper class */
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Pulse animation for recording states */
+@keyframes mui-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: mui-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spin animation for loading */
+@keyframes mui-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: mui-spin 1s linear infinite;
+}

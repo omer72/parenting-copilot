@@ -1,7 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Container,
+  TextField,
+  CircularProgress,
+  IconButton,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  type Theme,
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MicIcon from '@mui/icons-material/Mic';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { Chip } from '../components/ui/Chip';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from '../locales';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
@@ -119,213 +136,251 @@ export function DailyReport() {
   };
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <button
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
+        <Box
+          component="button"
           onClick={() => navigate('/home')}
-          className="flex items-center text-purple-600 mb-4"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'primary.main',
+            fontWeight: 500,
+            mb: 2,
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            transition: 'color 0.2s',
+            '&:hover': { color: 'primary.dark' },
+          }}
         >
-          <svg
-            className={`w-5 h-5 ${isRTL ? 'rotate-180 ml-1' : 'mr-1'}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          {t.common.back}
-        </button>
+          {isRTL ? <ArrowForwardIcon fontSize="small" /> : <ArrowBackIcon fontSize="small" />}
+          <span>{t.common.back}</span>
+        </Box>
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 1,
+          }}
+        >
           {t.dailyReport.title}
-        </h1>
-        <p className="text-gray-600 mb-6">{t.dailyReport.subtitle}</p>
+        </Typography>
+        <Typography sx={{ color: 'text.secondary', mb: 3 }}>
+          {t.dailyReport.subtitle}
+        </Typography>
 
         {!report ? (
           <>
             {/* Child Selector */}
             {children.length > 0 && (
-              <Card className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t.dailyReport.selectChild}
-                </label>
-                <select
-                  value={selectedChildId}
-                  onChange={(e) => setSelectedChildId(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  dir={isRTL ? 'rtl' : 'ltr'}
-                >
-                  {children.map((child) => (
-                    <option key={child.id} value={child.id}>
-                      {child.name}
-                    </option>
-                  ))}
-                </select>
+              <Card sx={{ mb: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="child-select-label">{t.dailyReport.selectChild}</InputLabel>
+                  <Select
+                    labelId="child-select-label"
+                    value={selectedChildId}
+                    label={t.dailyReport.selectChild}
+                    onChange={(e) => setSelectedChildId(e.target.value)}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    {children.map((child) => (
+                      <MenuItem key={child.id} value={child.id}>
+                        {child.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Card>
             )}
 
             {/* Quick Options */}
-            <Card className="mb-4">
+            <Card sx={{ mb: 2 }}>
               {/* Day Quality */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                   {t.dailyReport.quickOptions.dayQualityLabel}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {(['great', 'okay', 'challenging'] as DayQuality[]).map((option) => (
-                    <button
+                    <Chip
                       key={option}
-                      onClick={() => setQuickSelections(prev => ({ ...prev, dayQuality: prev.dayQuality === option ? undefined : option }))}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        quickSelections.dayQuality === option
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t.dailyReport.quickOptions.dayQuality[option]}
-                    </button>
+                      label={t.dailyReport.quickOptions.dayQuality[option]}
+                      selected={quickSelections.dayQuality === option}
+                      onClick={() => setQuickSelections(prev => ({
+                        ...prev,
+                        dayQuality: prev.dayQuality === option ? undefined : option
+                      }))}
+                    />
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Communication */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                   {t.dailyReport.quickOptions.communicationLabel}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {(['good', 'average', 'difficult'] as Communication[]).map((option) => (
-                    <button
+                    <Chip
                       key={option}
-                      onClick={() => setQuickSelections(prev => ({ ...prev, communication: prev.communication === option ? undefined : option }))}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        quickSelections.communication === option
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t.dailyReport.quickOptions.communication[option]}
-                    </button>
+                      label={t.dailyReport.quickOptions.communication[option]}
+                      selected={quickSelections.communication === option}
+                      onClick={() => setQuickSelections(prev => ({
+                        ...prev,
+                        communication: prev.communication === option ? undefined : option
+                      }))}
+                    />
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Sleep Quality */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                   {t.dailyReport.quickOptions.sleepLabel}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {(['good', 'poor'] as SleepQuality[]).map((option) => (
-                    <button
+                    <Chip
                       key={option}
-                      onClick={() => setQuickSelections(prev => ({ ...prev, sleepQuality: prev.sleepQuality === option ? undefined : option }))}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        quickSelections.sleepQuality === option
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t.dailyReport.quickOptions.sleep[option]}
-                    </button>
+                      label={t.dailyReport.quickOptions.sleep[option]}
+                      selected={quickSelections.sleepQuality === option}
+                      onClick={() => setQuickSelections(prev => ({
+                        ...prev,
+                        sleepQuality: prev.sleepQuality === option ? undefined : option
+                      }))}
+                    />
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Child Mood (multi-select) */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                   {t.dailyReport.quickOptions.moodLabel}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {(['happy', 'calm', 'cranky', 'emotional'] as ChildMood[]).map((option) => (
-                    <button
+                    <Chip
                       key={option}
+                      label={t.dailyReport.quickOptions.mood[option]}
+                      selected={quickSelections.childMood?.includes(option)}
                       onClick={() => toggleArraySelection('childMood', option)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        quickSelections.childMood?.includes(option)
-                          ? 'bg-pink-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t.dailyReport.quickOptions.mood[option]}
-                    </button>
+                    />
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Behavior Highlights (multi-select) */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                   {t.dailyReport.quickOptions.behaviorLabel}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {(['cooperation', 'tantrums', 'calm', 'hyperactive'] as BehaviorHighlight[]).map((option) => (
-                    <button
+                    <Chip
                       key={option}
+                      label={t.dailyReport.quickOptions.behavior[option]}
+                      selected={quickSelections.behaviorHighlights?.includes(option)}
                       onClick={() => toggleArraySelection('behaviorHighlights', option)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        quickSelections.behaviorHighlights?.includes(option)
-                          ? 'bg-green-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t.dailyReport.quickOptions.behavior[option]}
-                    </button>
+                    />
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
             </Card>
 
             {/* Day Description with Voice Recording */}
-            <Card className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Card sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}>
                 {t.dailyReport.additionalDetails}
-              </label>
-              <div className="relative">
-                <textarea
+              </Typography>
+              <Box sx={{ position: 'relative' }}>
+                <TextField
                   value={dayDescription}
                   onChange={(e) => setDayDescription(e.target.value)}
                   placeholder={t.dailyReport.describeDayPlaceholder}
-                  className={`w-full p-3 ${isRTL ? 'pl-12' : 'pr-12'} border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px]`}
+                  multiline
+                  rows={4}
+                  fullWidth
                   dir={isRTL ? 'rtl' : 'ltr'}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      ...(isRTL ? { pl: 6 } : { pr: 6 }),
+                    },
+                  }}
                 />
                 {isSupported && (
-                  <button
-                    type="button"
+                  <IconButton
                     onClick={isListening ? stopListening : startListening}
                     disabled={isTranscribing}
-                    className={`absolute ${isRTL ? 'left-2' : 'right-2'} bottom-2 p-2 rounded-full transition-colors ${
-                      isTranscribing
-                        ? 'bg-blue-500 text-white animate-pulse'
+                    sx={{
+                      position: 'absolute',
+                      ...(isRTL ? { left: 8 } : { right: 8 }),
+                      bottom: 8,
+                      p: 1,
+                      transition: 'all 0.2s',
+                      background: isTranscribing
+                        ? 'info.main'
                         : isListening
-                        ? 'bg-red-500 text-white animate-pulse'
-                        : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                    } disabled:opacity-75`}
+                        ? 'error.main'
+                        : (theme: Theme) => theme.palette.primary.light + '30',
+                      color: isTranscribing || isListening ? 'white' : 'primary.main',
+                      animation: (isTranscribing || isListening) ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
+                      '@keyframes pulse': {
+                        '0%, 100%': { opacity: 1 },
+                        '50%': { opacity: 0.7 },
+                      },
+                      '&:hover': {
+                        background: isTranscribing
+                          ? 'info.dark'
+                          : isListening
+                          ? 'error.dark'
+                          : (theme: Theme) => theme.palette.primary.light + '50',
+                      },
+                      '&:disabled': {
+                        opacity: 0.75,
+                      },
+                    }}
                     title={isTranscribing ? t.describe.transcribing : isListening ? t.describe.stopRecording : t.describe.voiceRecording}
                   >
                     {isTranscribing ? (
-                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                      </svg>
+                      <CircularProgress size={20} sx={{ color: 'white' }} />
                     ) : (
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
-                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                      </svg>
+                      <MicIcon />
                     )}
-                  </button>
+                  </IconButton>
                 )}
-              </div>
+              </Box>
               {(isListening || isTranscribing) && (
-                <p className={`text-sm mt-2 animate-pulse ${isTranscribing ? 'text-blue-500' : 'text-red-500'}`}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mt: 1,
+                    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    '@keyframes pulse': {
+                      '0%, 100%': { opacity: 1 },
+                      '50%': { opacity: 0.5 },
+                    },
+                    color: isTranscribing ? 'info.main' : 'error.main',
+                  }}
+                >
                   {isTranscribing ? t.describe.transcribing : t.describe.recording}
-                </p>
+                </Typography>
               )}
-              <p className="text-sm text-gray-500 mt-2">
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                 {t.dailyReport.optionalDetails}
-              </p>
+              </Typography>
             </Card>
 
             {/* Generate Report Button */}
@@ -333,7 +388,7 @@ export function DailyReport() {
               onClick={handleGenerateReport}
               disabled={loading || !hasAnySelection() || !selectedChild}
               fullWidth
-              className="mb-4"
+              sx={{ mb: 2 }}
             >
               {loading ? t.dailyReport.loading : t.dailyReport.generateReport}
             </Button>
@@ -341,44 +396,79 @@ export function DailyReport() {
         ) : (
           <>
             {/* Report Display */}
-            <div className="space-y-4 mb-6">
-              <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-purple-500`}>
-                <h3 className="font-semibold text-purple-900 mb-2">{t.dailyReport.summary}</h3>
-                <p className="text-gray-700">{report.summary}</p>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+              <Card
+                sx={{
+                  ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+                  borderColor: 'primary.main',
+                }}
+              >
+                <Typography sx={{ fontWeight: 600, color: 'primary.dark', mb: 1 }}>
+                  {t.dailyReport.summary}
+                </Typography>
+                <Typography color="text.secondary">{report.summary}</Typography>
               </Card>
 
               {report.patterns.length > 0 && (
-                <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-blue-500`}>
-                  <h3 className="font-semibold text-blue-900 mb-2">{t.dailyReport.patterns}</h3>
-                  <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <Card
+                  sx={{
+                    ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+                    borderColor: 'info.main',
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600, color: 'info.dark', mb: 1 }}>
+                    {t.dailyReport.patterns}
+                  </Typography>
+                  <Box component="ul" sx={{ listStyle: 'disc', listStylePosition: 'inside', color: 'text.secondary' }}>
                     {report.patterns.map((pattern, idx) => (
                       <li key={idx}>{pattern}</li>
                     ))}
-                  </ul>
+                  </Box>
                 </Card>
               )}
 
-              <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-green-500`}>
-                <h3 className="font-semibold text-green-900 mb-2">{t.dailyReport.successHighlights}</h3>
-                <p className="text-gray-700">{report.successHighlights}</p>
+              <Card
+                sx={{
+                  ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+                  borderColor: 'success.main',
+                }}
+              >
+                <Typography sx={{ fontWeight: 600, color: 'success.dark', mb: 1 }}>
+                  {t.dailyReport.successHighlights}
+                </Typography>
+                <Typography color="text.secondary">{report.successHighlights}</Typography>
               </Card>
 
-              <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-yellow-500`}>
-                <h3 className="font-semibold text-yellow-900 mb-2">{t.dailyReport.areasToWatch}</h3>
-                <p className="text-gray-700">{report.areasToWatch}</p>
+              <Card
+                sx={{
+                  ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+                  borderColor: 'warning.main',
+                }}
+              >
+                <Typography sx={{ fontWeight: 600, color: 'warning.dark', mb: 1 }}>
+                  {t.dailyReport.areasToWatch}
+                </Typography>
+                <Typography color="text.secondary">{report.areasToWatch}</Typography>
               </Card>
 
-              <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-pink-500`}>
-                <h3 className="font-semibold text-pink-900 mb-2">{t.dailyReport.tomorrowTips}</h3>
-                <ul className="list-disc list-inside text-gray-700 space-y-1">
+              <Card
+                sx={{
+                  ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+                  borderColor: 'secondary.main',
+                }}
+              >
+                <Typography sx={{ fontWeight: 600, color: 'secondary.dark', mb: 1 }}>
+                  {t.dailyReport.tomorrowTips}
+                </Typography>
+                <Box component="ul" sx={{ listStyle: 'disc', listStylePosition: 'inside', color: 'text.secondary' }}>
                   {report.tomorrowTips.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
-                </ul>
+                </Box>
               </Card>
-            </div>
+            </Box>
 
-            <Button onClick={handleReset} fullWidth className="mb-4">
+            <Button onClick={handleReset} fullWidth sx={{ mb: 2 }}>
               {t.dailyReport.newReport}
             </Button>
           </>
@@ -386,20 +476,28 @@ export function DailyReport() {
 
         {/* Loading State */}
         {loading && (
-          <div className="flex flex-col items-center py-8">
-            <div className="animate-spin w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full mb-3" />
-            <p className="text-purple-600">{t.dailyReport.loading}</p>
-          </div>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
+            <CircularProgress size={40} sx={{ mb: 1.5, color: 'primary.main' }} />
+            <Typography sx={{ color: 'primary.main' }}>{t.dailyReport.loading}</Typography>
+          </Box>
         )}
 
         <Button onClick={() => navigate('/home')} variant="outline" fullWidth>
           {t.common.back}
         </Button>
 
-        <p className="text-center text-sm text-purple-400 mt-6 font-medium">
+        <Typography
+          variant="body2"
+          sx={{
+            textAlign: 'center',
+            color: 'primary.light',
+            mt: 3,
+            fontWeight: 500,
+          }}
+        >
           {t.common.disclaimer}
-        </p>
-      </div>
-    </div>
+        </Typography>
+      </Container>
+    </Box>
   );
 }

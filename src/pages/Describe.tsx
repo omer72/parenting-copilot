@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Container, IconButton, CircularProgress } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MicIcon from '@mui/icons-material/Mic';
+import StopIcon from '@mui/icons-material/Stop';
 import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Input';
 import { useApp } from '../context/AppContext';
@@ -45,86 +50,157 @@ export function Describe() {
   };
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <button
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
+        <Box
+          component="button"
           onClick={() => navigate(-1)}
-          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'primary.main',
+            fontWeight: 500,
+            mb: 2,
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            transition: 'color 0.2s',
+            '&:hover': { color: 'primary.dark' },
+          }}
         >
-          <span>{isRTL ? '→' : '←'}</span>
+          {isRTL ? <ArrowForwardIcon fontSize="small" /> : <ArrowBackIcon fontSize="small" />}
           <span>{t.common.back}</span>
-        </button>
+        </Box>
 
         {child && (
-          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
+          <Typography
+            sx={{
+              color: 'primary.main',
+              fontWeight: 700,
+              mb: 1,
+              fontSize: '1.125rem',
+            }}
+          >
+            {child.name}
+          </Typography>
         )}
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 1,
+          }}
+        >
           {t.describe.title}
-        </h1>
-        <p className="text-purple-700 mb-6 font-medium">{t.describe.subtitle}</p>
+        </Typography>
+        <Typography
+          sx={{
+            color: 'primary.dark',
+            mb: 3,
+            fontWeight: 500,
+          }}
+        >
+          {t.describe.subtitle}
+        </Typography>
 
-        <div className="relative">
+        <Box sx={{ position: 'relative' }}>
           <Textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder={t.describe.placeholder}
             rows={6}
-            className="text-lg"
+            sx={{ fontSize: '1.125rem' }}
           />
 
           {isSupported && (
-            <button
-              type="button"
+            <IconButton
               onClick={isListening ? stopListening : startListening}
               disabled={isTranscribing}
-              className={`absolute ltr:right-3 rtl:left-3 bottom-3 p-3 rounded-full transition-all duration-300 shadow-lg ${
-                isTranscribing
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse'
+              sx={{
+                position: 'absolute',
+                ...(isRTL ? { left: 12 } : { right: 12 }),
+                bottom: 12,
+                p: 1.5,
+                boxShadow: 3,
+                transition: 'all 0.3s',
+                background: isTranscribing
+                  ? 'linear-gradient(to right, #3b82f6, #8b5cf6)'
                   : isListening
-                  ? 'bg-gradient-to-r from-red-500 to-pink-500 animate-pulse'
-                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-xl'
-              } text-white disabled:opacity-75`}
+                  ? 'linear-gradient(to right, #ef4444, #ec4899)'
+                  : 'var(--gradient-primary)',
+                color: 'white',
+                animation: (isTranscribing || isListening) ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
+                '@keyframes pulse': {
+                  '0%, 100%': { opacity: 1 },
+                  '50%': { opacity: 0.7 },
+                },
+                '&:hover': {
+                  boxShadow: 6,
+                  background: isTranscribing
+                    ? 'linear-gradient(to right, #2563eb, #7c3aed)'
+                    : isListening
+                    ? 'linear-gradient(to right, #dc2626, #db2777)'
+                    : 'var(--gradient-primary-hover)',
+                },
+                '&:disabled': {
+                  opacity: 0.75,
+                  color: 'white',
+                },
+              }}
               title={isTranscribing ? t.describe.transcribing : isListening ? t.describe.stopRecording : t.describe.voiceRecording}
             >
               {isTranscribing ? (
-                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                </svg>
+                <CircularProgress size={20} sx={{ color: 'white' }} />
               ) : isListening ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <rect x="7" y="5" width="6" height="10" rx="1" />
-                </svg>
+                <StopIcon />
               ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z"/>
-                  <path d="M5.5 9.643a.75.75 0 011.5 0V10c0 1.657 1.343 3 3 3s3-1.343 3-3v-.357a.75.75 0 011.5 0V10a4.5 4.5 0 01-4 4.472V16.5h2a.75.75 0 010 1.5h-5a.75.75 0 010-1.5h2v-2.028A4.5 4.5 0 015.5 10v-.357z"/>
-                </svg>
+                <MicIcon />
               )}
-            </button>
+            </IconButton>
           )}
-        </div>
+        </Box>
 
         {(isListening || isTranscribing) && (
-          <p className={`text-sm mt-2 font-medium animate-pulse ${isTranscribing ? 'text-blue-500' : 'text-red-500'}`}>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              fontWeight: 500,
+              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              '@keyframes pulse': {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.5 },
+              },
+              color: isTranscribing ? 'info.main' : 'error.main',
+            }}
+          >
             {isTranscribing ? t.describe.transcribing : t.describe.recording}
-          </p>
+          </Typography>
         )}
 
-        <p className="text-sm text-purple-400 mt-2 font-medium">
+        <Typography
+          variant="body2"
+          sx={{ color: 'primary.light', mt: 1, fontWeight: 500 }}
+        >
           {t.describe.characters.replace('{count}', String(description.length))}
-        </p>
+        </Typography>
 
         <Button
           onClick={handleContinue}
           fullWidth
-          className="mt-6"
           disabled={!canContinue}
+          sx={{ mt: 3 }}
         >
           {t.common.continue}
         </Button>
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 }

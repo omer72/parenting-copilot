@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Box, IconButton } from '@mui/material';
 import { SettingsButton } from './SettingsButton';
 
 interface LayoutProps {
@@ -14,24 +15,48 @@ export function Layout({ children }: LayoutProps) {
   const showLogo = location.pathname !== '/' && location.pathname !== '/home';
 
   return (
-    <div className="relative">
-      <div className="fixed left-4 z-50 flex items-center gap-2" style={{ top: 'calc(env(safe-area-inset-top) + 16px)' }}>
+    <Box sx={{ position: 'relative' }}>
+      <Box
+        sx={{
+          position: 'fixed',
+          left: 16,
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          top: 'calc(env(safe-area-inset-top) + 16px)',
+        }}
+      >
         <SettingsButton />
         {showLogo && (
-          <button
+          <IconButton
             onClick={() => navigate('/home')}
-            className="w-10 h-10 rounded-full overflow-hidden hover:opacity-80 transition-opacity"
             title="Home"
+            sx={{
+              width: 40,
+              height: 40,
+              p: 0,
+              overflow: 'hidden',
+              '&:hover': {
+                opacity: 0.8,
+              },
+            }}
           >
-            <img
+            <Box
+              component="img"
               src="/logo.png"
               alt="Home"
-              className="w-full h-full object-cover"
+              sx={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%',
+              }}
             />
-          </button>
+          </IconButton>
         )}
-      </div>
+      </Box>
       {children}
-    </div>
+    </Box>
   );
 }

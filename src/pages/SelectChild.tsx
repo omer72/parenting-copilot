@@ -1,4 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Container } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useApp } from '../context/AppContext';
@@ -15,47 +18,87 @@ export function SelectChild() {
   };
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <button
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
+        <Box
+          component="button"
           onClick={() => navigate('/home')}
-          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'primary.main',
+            fontWeight: 500,
+            mb: 2,
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            transition: 'color 0.2s',
+            '&:hover': { color: 'primary.dark' },
+          }}
         >
-          <span>{isRTL ? '→' : '←'}</span>
+          {isRTL ? <ArrowForwardIcon fontSize="small" /> : <ArrowBackIcon fontSize="small" />}
           <span>{t.common.back}</span>
-        </button>
+        </Box>
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 3,
+          }}
+        >
           {t.selectChild.title}
-        </h1>
+        </Typography>
 
-        <div className="space-y-3">
-          {children.map(child => (
-            <Card
-              key={child.id}
-              onClick={() => handleSelectChild(child.id)}
-              className="flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-bold text-lg text-purple-900">{child.name}</h3>
-                <p className="text-purple-600 text-sm font-medium">
-                  {t.common.ageValue.replace('{age}', String(child.age))}
-                </p>
-              </div>
-              <span className="text-2xl text-purple-500">{isRTL ? '←' : '→'}</span>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {children.map((child) => (
+            <Card key={child.id} onClick={() => handleSelectChild(child.id)}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, color: 'primary.dark' }}
+                  >
+                    {child.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: 'primary.main', fontWeight: 500 }}
+                  >
+                    {t.common.ageValue.replace('{age}', String(child.age))}
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{ fontSize: '1.5rem', color: 'primary.main' }}
+                >
+                  {isRTL ? '←' : '→'}
+                </Typography>
+              </Box>
             </Card>
           ))}
-        </div>
+        </Box>
 
         <Button
           variant="outline"
           fullWidth
-          className="mt-6"
           onClick={() => navigate('/child')}
+          sx={{ mt: 3 }}
         >
           {t.selectChild.addNewChild}
         </Button>
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 }

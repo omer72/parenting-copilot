@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Container, Avatar } from '@mui/material';
 import { Button } from '../components/ui/Button';
 import { useTranslation } from '../locales';
 
@@ -11,52 +12,137 @@ export function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-6 pb-8 overflow-auto">
-      <div className="max-w-md w-full text-center flex-1 flex flex-col justify-center">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        p: 3,
+        pb: 4,
+        overflow: 'auto',
+      }}
+    >
+      <Container
+        maxWidth="sm"
+        sx={{
+          textAlign: 'center',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         {/* Logo */}
-        <div className="mb-6">
-          <img
+        <Box sx={{ mb: 3 }}>
+          <Box
+            component="img"
             src="/logo.png"
             alt="Kidsit.ai"
-            className="w-48 h-48 mx-auto object-contain"
+            sx={{
+              width: 192,
+              height: 192,
+              mx: 'auto',
+              objectFit: 'contain',
+            }}
           />
-        </div>
+        </Box>
 
         {/* Title */}
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '2.25rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 2,
+          }}
+        >
           {t.landing.title}
-        </h1>
+        </Typography>
 
         {/* Subtitle */}
-        <p className="text-xl text-gray-600 mb-8">
+        <Typography
+          variant="h5"
+          sx={{
+            color: 'text.secondary',
+            mb: 4,
+            fontWeight: 400,
+          }}
+        >
           {t.landing.subtitle}
-        </p>
+        </Typography>
 
         {/* Features */}
-        <div className={`text-${isRTL ? 'right' : 'left'} space-y-4 mb-8`}>
+        <Box
+          sx={{
+            textAlign: isRTL ? 'right' : 'left',
+            mb: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
           {t.landing.features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-purple-600 text-lg">{feature.icon}</span>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
-              </div>
-            </div>
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1.5,
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: 'primary.light',
+                  fontSize: '1rem',
+                  flexShrink: 0,
+                  mt: 0.25,
+                }}
+              >
+                {feature.icon}
+              </Avatar>
+              <Box>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
+                >
+                  {feature.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {feature.description}
+                </Typography>
+              </Box>
+            </Box>
           ))}
-        </div>
+        </Box>
 
         {/* CTA Button */}
-        <Button onClick={handleEnter} fullWidth className="text-lg py-4">
+        <Button
+          onClick={handleEnter}
+          fullWidth
+          sx={{ fontSize: '1.125rem', py: 2 }}
+        >
           {t.landing.enterButton}
         </Button>
 
         {/* Disclaimer */}
-        <p className="text-sm text-gray-400 mt-6">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            mt: 3,
+            opacity: 0.7,
+          }}
+        >
           {t.common.disclaimer}
-        </p>
-      </div>
-    </div>
+        </Typography>
+      </Container>
+    </Box>
   );
 }

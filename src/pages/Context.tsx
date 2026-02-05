@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Container } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Button } from '../components/ui/Button';
 import { Chip } from '../components/ui/Chip';
 import { useApp } from '../context/AppContext';
@@ -62,28 +65,66 @@ export function Context() {
   ];
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
-        <button
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
+        <Box
+          component="button"
           onClick={() => navigate(-1)}
-          className="text-purple-500 hover:text-purple-700 mb-4 flex items-center gap-1 font-medium transition-colors"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            color: 'primary.main',
+            fontWeight: 500,
+            mb: 2,
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            transition: 'color 0.2s',
+            '&:hover': { color: 'primary.dark' },
+          }}
         >
-          <span>{isRTL ? '→' : '←'}</span>
+          {isRTL ? <ArrowForwardIcon fontSize="small" /> : <ArrowBackIcon fontSize="small" />}
           <span>{t.common.back}</span>
-        </button>
+        </Box>
 
         {child && (
-          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
+          <Typography
+            sx={{
+              color: 'primary.main',
+              fontWeight: 700,
+              mb: 1,
+              fontSize: '1.125rem',
+            }}
+          >
+            {child.name}
+          </Typography>
         )}
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 3,
+          }}
+        >
           {t.context.title}
-        </h1>
+        </Typography>
 
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-bold text-purple-900 mb-3">{t.context.location}</h3>
-            <div className="flex flex-wrap gap-2">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
+            >
+              {t.context.location}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {locationOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
@@ -92,12 +133,17 @@ export function Context() {
                   onClick={() => setLocation(key)}
                 />
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div>
-            <h3 className="font-bold text-purple-900 mb-3">{t.context.whoPresent}</h3>
-            <div className="flex flex-wrap gap-2">
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
+            >
+              {t.context.whoPresent}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {presenceOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
@@ -106,12 +152,17 @@ export function Context() {
                   onClick={() => setPresence(key)}
                 />
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div>
-            <h3 className="font-bold text-purple-900 mb-3">{t.context.privacy}</h3>
-            <div className="flex flex-wrap gap-2">
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
+            >
+              {t.context.privacy}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {physicalityOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
@@ -120,12 +171,17 @@ export function Context() {
                   onClick={() => setPhysicality(key)}
                 />
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div>
-            <h3 className="font-bold text-purple-900 mb-3">{t.context.yourMood}</h3>
-            <div className="flex flex-wrap gap-2">
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
+            >
+              {t.context.yourMood}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {emotionalStateOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
@@ -134,19 +190,19 @@ export function Context() {
                   onClick={() => setEmotionalState(key)}
                 />
               ))}
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
 
         <Button
           onClick={handleContinue}
           fullWidth
-          className="mt-8"
           disabled={!isComplete}
+          sx={{ mt: 4 }}
         >
           {t.common.continue}
         </Button>
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 }

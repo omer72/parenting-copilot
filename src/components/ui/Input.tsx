@@ -1,41 +1,95 @@
-import type { InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { TextField, type TextFieldProps, type InputBaseComponentProps } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    transition: 'all 0.3s ease',
+    '& fieldset': {
+      borderWidth: 2,
+      borderColor: theme.palette.primary.light + '60',
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.primary.main,
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+      borderWidth: 2,
+      boxShadow: `0 0 0 4px ${theme.palette.primary.main}20`,
+    },
+    '&.Mui-error fieldset': {
+      borderColor: theme.palette.error.main,
+    },
+  },
+  '& .MuiInputLabel-root': {
+    fontWeight: 600,
+    color: theme.palette.primary.dark,
+    '&.Mui-focused': {
+      color: theme.palette.primary.main,
+    },
+    '&.Mui-error': {
+      color: theme.palette.error.main,
+    },
+  },
+  '& .MuiFormHelperText-root': {
+    fontWeight: 500,
+    marginLeft: 0,
+    '&.Mui-error': {
+      color: theme.palette.error.main,
+    },
+  },
+}));
+
+interface InputProps extends Omit<TextFieldProps, 'variant' | 'error'> {
+  error?: boolean | string;
+  min?: number;
+  max?: number;
 }
 
-interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label?: string;
-  error?: string;
+interface TextareaProps extends Omit<TextFieldProps, 'variant' | 'multiline' | 'error'> {
+  error?: boolean | string;
+  rows?: number;
 }
 
-export function Input({ label, error, className = '', ...props }: InputProps) {
+export function Input({ label, error, min, max, ...props }: InputProps) {
+  const hasError = Boolean(error);
+  const helperText = typeof error === 'string' ? error : undefined;
+
+  // Build inputProps for min/max support
+  const inputProps: InputBaseComponentProps = {};
+  if (min !== undefined) inputProps.min = min;
+  if (max !== undefined) inputProps.max = max;
+
   return (
-    <div className="flex flex-col gap-1">
-      {label && (
-        <label className="text-sm font-semibold text-purple-900">{label}</label>
-      )}
-      <input
-        className={`px-4 py-3 rounded-2xl border-2 border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 bg-white/80 ${error ? 'border-red-500' : ''} ${className}`}
-        {...props}
-      />
-      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
-    </div>
+    <StyledTextField
+      label={label}
+      variant="outlined"
+      fullWidth
+      error={hasError}
+      helperText={helperText}
+      slotProps={{
+        htmlInput: inputProps,
+      }}
+      {...props}
+    />
   );
 }
 
-export function Textarea({ label, error, className = '', ...props }: TextareaProps) {
+export function Textarea({ label, error, rows = 6, ...props }: TextareaProps) {
+  const hasError = Boolean(error);
+  const helperText = typeof error === 'string' ? error : undefined;
+
   return (
-    <div className="flex flex-col gap-1">
-      {label && (
-        <label className="text-sm font-semibold text-purple-900">{label}</label>
-      )}
-      <textarea
-        className={`px-4 py-3 rounded-2xl border-2 border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 resize-none bg-white/80 ${error ? 'border-red-500' : ''} ${className}`}
-        {...props}
-      />
-      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
-    </div>
+    <StyledTextField
+      label={label}
+      variant="outlined"
+      fullWidth
+      multiline
+      rows={rows}
+      error={hasError}
+      helperText={helperText}
+      {...props}
+    />
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Container, CircularProgress, TextField, type Theme } from '@mui/material';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { useApp } from '../context/AppContext';
@@ -146,131 +147,225 @@ export function Response() {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-4 flex flex-col items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mb-4" />
-        <p className="text-purple-700 font-semibold">{t.response.processing}</p>
-        <p className="text-purple-400 text-sm mt-2 font-medium">{t.response.processingTime}</p>
-      </div>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <CircularProgress size={48} sx={{ mb: 2, color: 'primary.main' }} />
+        <Typography sx={{ color: 'primary.dark', fontWeight: 600 }}>
+          {t.response.processing}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'primary.light', mt: 1, fontWeight: 500 }}>
+          {t.response.processingTime}
+        </Typography>
+      </Box>
     );
   }
 
   if (!response) {
     return (
-      <div className="min-h-screen p-4 flex flex-col items-center justify-center">
-        <p className="text-gray-600 mb-4">{t.response.error}</p>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography sx={{ color: 'text.secondary', mb: 2 }}>
+          {t.response.error}
+        </Typography>
         <Button onClick={handleHome}>{t.response.backHome}</Button>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
+    <Box sx={{ minHeight: '100vh', p: 2 }}>
+      <Container maxWidth="sm">
         {child && (
-          <p className="text-purple-600 font-bold mb-2 text-lg">{child.name}</p>
+          <Typography
+            sx={{
+              color: 'primary.main',
+              fontWeight: 700,
+              mb: 1,
+              fontSize: '1.125rem',
+            }}
+          >
+            {child.name}
+          </Typography>
         )}
 
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '1.875rem',
+            fontWeight: 700,
+            background: 'var(--gradient-primary)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            mb: 3,
+          }}
+        >
           {t.response.title}
-        </h1>
+        </Typography>
 
-        <div className="space-y-4">
-          <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-green-500`}>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">🟢</span>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{t.response.whatToDo}</h3>
-                <p className="text-gray-700">{response.doNow}</p>
-              </div>
-            </div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Card
+            sx={{
+              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+              borderColor: 'success.main',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+              <Typography sx={{ fontSize: '1.5rem' }}>🟢</Typography>
+              <Box>
+                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                  {t.response.whatToDo}
+                </Typography>
+                <Typography color="text.secondary">{response.doNow}</Typography>
+              </Box>
+            </Box>
           </Card>
 
-          <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-red-500`}>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">🔴</span>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{t.response.whatNotToDo}</h3>
-                <p className="text-gray-700">{response.dontDo}</p>
-              </div>
-            </div>
+          <Card
+            sx={{
+              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+              borderColor: 'error.main',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+              <Typography sx={{ fontSize: '1.5rem' }}>🔴</Typography>
+              <Box>
+                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                  {t.response.whatNotToDo}
+                </Typography>
+                <Typography color="text.secondary">{response.dontDo}</Typography>
+              </Box>
+            </Box>
           </Card>
 
-          <Card className={`${isRTL ? 'border-r-4' : 'border-l-4'} border-blue-500`}>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">🔵</span>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{t.response.whatToSay}</h3>
-                <p className="text-gray-700 font-medium">"{response.sayThis}"</p>
-              </div>
-            </div>
+          <Card
+            sx={{
+              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
+              borderColor: 'info.main',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+              <Typography sx={{ fontSize: '1.5rem' }}>🔵</Typography>
+              <Box>
+                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                  {t.response.whatToSay}
+                </Typography>
+                <Typography color="text.secondary" sx={{ fontWeight: 500 }}>
+                  "{response.sayThis}"
+                </Typography>
+              </Box>
+            </Box>
           </Card>
-        </div>
+        </Box>
 
         {/* Feedback Section */}
         {feedbackState === 'pending' && (
-          <div className="mt-6">
-            <p className="text-center text-gray-600 mb-3">{t.response.didItHelp}</p>
-            <div className="flex gap-3 justify-center">
-              <Button onClick={handleHelped} variant="outline" className="flex-1 max-w-[140px]">
+          <Box sx={{ mt: 3 }}>
+            <Typography sx={{ textAlign: 'center', color: 'text.secondary', mb: 1.5 }}>
+              {t.response.didItHelp}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
+              <Button onClick={handleHelped} variant="outline" sx={{ flex: 1, maxWidth: 140 }}>
                 {t.response.helped}
               </Button>
-              <Button onClick={handleNotHelped} variant="outline" className="flex-1 max-w-[140px]">
+              <Button onClick={handleNotHelped} variant="outline" sx={{ flex: 1, maxWidth: 140 }}>
                 {t.response.notHelped}
               </Button>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
 
         {feedbackState === 'asking_followup' && (
-          <div className="mt-6">
-            <Card className="bg-purple-50 border-purple-200">
-              <p className="text-gray-700 mb-3">{t.response.followUpPrompt}</p>
-              <textarea
+          <Box sx={{ mt: 3 }}>
+            <Card
+              sx={{
+                bgcolor: (theme: Theme) => theme.palette.primary.light + '20',
+                borderColor: 'primary.light',
+              }}
+            >
+              <Typography color="text.secondary" sx={{ mb: 1.5 }}>
+                {t.response.followUpPrompt}
+              </Typography>
+              <TextField
                 value={followUpText}
                 onChange={(e) => setFollowUpText(e.target.value)}
                 placeholder={t.response.followUpPlaceholder}
-                className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                multiline
                 rows={3}
+                fullWidth
                 dir={isRTL ? 'rtl' : 'ltr'}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  },
+                }}
               />
-              <div className="flex gap-3 mt-3">
-                <Button onClick={handleSubmitFollowUp} disabled={!followUpText.trim()} className="flex-1">
+              <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5 }}>
+                <Button onClick={handleSubmitFollowUp} disabled={!followUpText.trim()} sx={{ flex: 1 }}>
                   {t.common.send}
                 </Button>
                 <Button onClick={() => setFeedbackState('pending')} variant="outline">
                   {t.common.cancel}
                 </Button>
-              </div>
+              </Box>
             </Card>
-          </div>
+          </Box>
         )}
 
         {feedbackState === 'loading_followup' && (
-          <div className="mt-6 flex flex-col items-center">
-            <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mb-2" />
-            <p className="text-purple-600 text-sm">{t.response.thinkingNewApproach}</p>
-          </div>
+          <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <CircularProgress size={32} sx={{ mb: 1, color: 'primary.main' }} />
+            <Typography variant="body2" sx={{ color: 'primary.main' }}>
+              {t.response.thinkingNewApproach}
+            </Typography>
+          </Box>
         )}
 
         {feedbackState === 'helped' && (
-          <div className="mt-6 text-center">
-            <p className="text-green-600 font-medium">{t.response.gladToHelp}</p>
-          </div>
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
+            <Typography sx={{ color: 'success.main', fontWeight: 500 }}>
+              {t.response.gladToHelp}
+            </Typography>
+          </Box>
         )}
 
-        <div className="mt-8 space-y-3">
+        <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Button onClick={handleNewSituation} fullWidth>
             {t.response.newSituation}
           </Button>
           <Button onClick={handleHome} variant="outline" fullWidth>
             {t.response.backHome}
           </Button>
-        </div>
+        </Box>
 
-        <p className="text-center text-sm text-purple-400 mt-6 font-medium">
+        <Typography
+          variant="body2"
+          sx={{
+            textAlign: 'center',
+            color: 'primary.light',
+            mt: 3,
+            fontWeight: 500,
+          }}
+        >
           {t.common.disclaimer}
-        </p>
-      </div>
-    </div>
+        </Typography>
+      </Container>
+    </Box>
   );
 }
