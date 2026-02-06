@@ -1,7 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Container } from '@mui/material';
+import SosIcon from '@mui/icons-material/Sos';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import MicIcon from '@mui/icons-material/Mic';
 import { Button } from '../components/ui/Button';
 import { useTranslation } from '../locales';
+
+const featureIcons = [
+  <SosIcon key="sos" sx={{ fontSize: 28, color: '#e53935' }} />,
+  <ChildCareIcon key="child" sx={{ fontSize: 28, color: '#ffc107' }} />,
+  <BarChartIcon key="chart" sx={{ fontSize: 28, color: '#4caf50' }} />,
+  <MicIcon key="mic" sx={{ fontSize: 28, color: '#795548' }} />,
+];
 
 export function Landing() {
   const navigate = useNavigate();
@@ -103,11 +114,10 @@ export function Landing() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '1.75rem',
                   flexShrink: 0,
                 }}
               >
-                {feature.icon}
+                {featureIcons[index]}
               </Box>
               <Box>
                 <Typography
