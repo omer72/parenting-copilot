@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Container, Avatar } from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import { Button } from '../components/ui/Button';
 import { useTranslation } from '../locales';
 
@@ -96,18 +96,19 @@ export function Landing() {
                 gap: 1.5,
               }}
             >
-              <Avatar
+              <Box
                 sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: 'primary.light',
-                  fontSize: '1rem',
+                  width: 40,
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.75rem',
                   flexShrink: 0,
-                  mt: 0.25,
                 }}
               >
                 {feature.icon}
-              </Avatar>
+              </Box>
               <Box>
                 <Typography
                   variant="subtitle1"
