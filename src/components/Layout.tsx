@@ -20,11 +20,13 @@ export function Layout({ children }: LayoutProps) {
         sx={{
           position: 'fixed',
           left: 16,
+          right: 'auto',
           zIndex: 50,
           display: 'flex',
           alignItems: 'center',
           gap: 1,
           top: 'calc(env(safe-area-inset-top) + 16px)',
+          direction: 'ltr',
         }}
       >
         <SettingsButton />
