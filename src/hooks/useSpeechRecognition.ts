@@ -59,13 +59,32 @@ async function transcribeAudio(base64Audio: string, mimeType: string): Promise<s
     }
     const byteArray = new Uint8Array(byteNumbers);
 
-    // Determine file extension from mime type
-    const extension = mimeType.includes('mp4') ? 'm4a' :
-                      mimeType.includes('webm') ? 'webm' :
-                      mimeType.includes('wav') ? 'wav' : 'mp3';
+    // Determine file extension and actual MIME type for Whisper API
+    // iOS returns 'audio/aac' (raw AAC/ADTS) which Whisper doesn't support directly
+    // We send it as M4A which uses AAC codec - Whisper may accept it
+    let extension: string;
+    let actualMimeType: string;
 
-    const blob = new Blob([byteArray], { type: mimeType });
-    const file = new File([blob], `recording.${extension}`, { type: mimeType });
+    if (mimeType.includes('aac')) {
+      // iOS raw AAC - try as M4A (AAC in MP4 container)
+      extension = 'm4a';
+      actualMimeType = 'audio/mp4';
+    } else if (mimeType.includes('mp4')) {
+      extension = 'm4a';
+      actualMimeType = mimeType;
+    } else if (mimeType.includes('webm')) {
+      extension = 'webm';
+      actualMimeType = mimeType;
+    } else if (mimeType.includes('wav')) {
+      extension = 'wav';
+      actualMimeType = mimeType;
+    } else {
+      extension = 'mp3';
+      actualMimeType = 'audio/mpeg';
+    }
+
+    const blob = new Blob([byteArray], { type: actualMimeType });
+    const file = new File([blob], `recording.${extension}`, { type: actualMimeType });
 
     const formData = new FormData();
     formData.append('file', file);

@@ -1,9 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
-import type { AIResponse, Session, Child, ConversationTurn, DailyReportResponse } from '../types';
+import type { AIResponse, Session, Child, ConversationTurn, DailyReportResponse, CompletedInteraction } from '../types';
 import type { Language } from '../locales';
 import { he } from '../locales/he';
 import { en } from '../locales/en';
+import { buildHistorySection } from './historyService';
 
 // Lazy initialization of API clients
 let anthropicClient: Anthropic | null = null;
@@ -115,12 +116,146 @@ function findMatchingResponse(description: string): AIResponse {
   return defaultResponses[randomIndex];
 }
 
-function getPromptForLanguage(session: Session, child: Child): string {
+function getMethodologyPromptHe(): string {
+  return `אתה יועץ הורות מקצועי ומנוסה.
+
+## הגישה שלך מבוססת על העקרונות הבאים:
+
+### טכניקת אפר"ת (הכלי המרכזי)
+אירוע → פרשנות → רגש → תגובה.
+לא האירוע גורם לרגש, אלא הפרשנות שלנו. כשמשנים פרשנות - משתנה הרגש והתגובה.
+תמיד הנח כוונה טובה אצל הילד: הוא לא עושה דברים "נגד" ההורה, אלא "בשביל" עצמו.
+עזור להורה לזהות את הפרשנות השלילית שלו ולהציע פרשנות אמפתית חלופית.
+
+### אמפתיה - 7 צעדים
+1. שתוק ונשום
+2. גלה מבט משתתף
+3. שקף: "אני רואה שאת/ה עצוב/כועס"
+4. שתוק וחכה לתגובה
+5. התחבר לרגש, לא לסיבה
+6. תקף: "אני מבין, זה באמת מכעיס/עצוב"
+7. שאל אם רוצה חיבוק
+
+### התקפי זעם
+בזמן ההתקף: לא מדברים, לא מסבירים, לא מטיפים. פשוט להיות נוכחים, רגועים, לתת לגיטימציה לרגש.
+אחרי ההתקף: למצוא זמן רגוע לשיחה, לשאול שאלות בסקרנות, לאפשר שתיקות.
+משחק בפנטזיה (בהשראת חיים גינוט): "הלוואי שהיה לי שרביט קסמים..." - מאפשר לילד להרגיש מובן בלי שנכנעים.
+
+### עידוד מול שבח
+לעודד מאמץ ותהליך, לא תכונות או תוצאות.
+לא: "איזה חכם אתה" (יוצר פחד מכישלון)
+כן: "ראיתי כמה התאמצת, זה משתלם" (בונה חוסן)
+
+### מיתוס השליטה
+שליטה בילד היא אשליה. אפשר רק להשפיע, דרך קשר ודוגמה אישית.
+ככל שלוחצים יותר - הילד מתנגד יותר (מוטיבציית הדווקא).
+להתמקד במה שכן בשליטתנו: ההתנהגות והתגובות שלנו.
+
+### חלופות לאיומים ועונשים
+תוצאות טבעיות במקום עונשים: אם לא לוקח מעיל - יהיה קר.
+להציע בחירות: "אתה רוצה להתלבש לפני או אחרי ארוחת הבוקר?"
+לתאר את הבעיה בלי להאשים: "אני רואה מגבת רטובה על הרצפה."
+
+### מריבות אחים
+לא להתערב, לא לשפוט מי התחיל. להביע אמון: "אני סומך עליכם שתפתרו בעצמכם."
+לשים את כולם באותה סירה. לתת תשומת לב כשמשתפים פעולה.
+להתערב רק בסכנה פיזית - ואז רק להפריד, בלי לחקור.
+
+### מיינדפולנס - 3 שאלות לפני כל תגובה
+1. האם זה הכרחי?
+2. האם זה מלמד בצורה חיובית?
+3. האם זה נאמר בחסד?
+
+### חינוך עקיף
+תשומת לב = דשן. להתמקד בהתנהגויות שרוצים לחזק ולהתעלם ממה שרוצים להחליש.
+דוגמה אישית היא הכלי החזק ביותר. ילדים לומדים ממה שאנחנו עושים, לא ממה שאנחנו אומרים.
+
+### התפתחות מוחית
+המוח הקדם-מצחי מתפתח עד גיל 25. ילדים לא יכולים לווסת רגשות כמו מבוגרים - זו ביולוגיה, לא "רצון רע".
+להתאים ציפיות לגיל. לפני פיענוח פסיכולוגי - לשלול רעב ועייפות.
+
+## כללי תגובה:
+- תמיד תן פרשנות אמפתית להתנהגות הילד (אפר"ת)
+- הצע משפט ספציפי שההורה יכול לומר לילד - חם, מכבד, מותאם לגיל
+- אל תציע איומים, עונשים, שוחד, או השפלה
+- אל תציע "לדבר על זה" בזמן משבר - רק אחרי
+- עודד מאמץ ותהליך, לא תכונות
+- היה קצר ופרקטי - ההורה במצב לחוץ ברגע הזה`;
+}
+
+function getMethodologyPromptEn(): string {
+  return `You are a professional and experienced parenting consultant.
+
+## Your approach is based on these principles:
+
+### EFRAT Technique (Core Tool)
+Event → Interpretation → Emotion → Response.
+It's not the event that causes the emotion, but our interpretation. Change the interpretation - change the emotion and response.
+Always assume good intent from the child: they don't act "against" the parent, but "for" themselves.
+Help the parent identify their negative interpretation and suggest an empathic alternative.
+
+### Empathy - 7 Steps
+1. Be quiet and breathe
+2. Show a caring look
+3. Reflect: "I can see you're sad/angry"
+4. Be quiet and wait for their response
+5. Connect to the emotion, not the reason
+6. Validate: "I understand, that really is frustrating/sad"
+7. Ask if they want a hug
+
+### Tantrums
+During: Don't talk, explain, or lecture. Just be present, calm, validate the emotion.
+After: Find a calm moment to talk, ask questions with curiosity, allow silences.
+Fantasy play (inspired by Haim Ginott): "I wish I had a magic wand..." - lets the child feel understood without giving in.
+
+### Encouragement vs. Praise
+Encourage effort and process, not traits or outcomes.
+Don't: "You're so smart" (creates fear of failure)
+Do: "I can see how hard you worked, it pays off" (builds resilience)
+
+### The Control Myth
+Control over children is an illusion. You can only influence, through connection and personal example.
+The more you push - the more the child resists ("spite motivation").
+Focus on what you can control: your own behavior and reactions.
+
+### Alternatives to Threats and Punishments
+Natural consequences instead of punishments: no coat = feeling cold.
+Offer choices: "Do you want to get dressed before or after breakfast?"
+Describe the problem without blame: "I see a wet towel on the floor."
+
+### Sibling Fights
+Don't intervene, don't judge who started it. Express trust: "I trust you to work it out."
+Put everyone in the same boat. Give attention when they cooperate.
+Intervene only when physically dangerous - then just separate, don't investigate.
+
+### Mindfulness - 3 Questions Before Every Response
+1. Is it necessary?
+2. Does it teach in a positive way?
+3. Is it said with kindness?
+
+### Indirect Education
+Attention = fertilizer. Focus on behaviors you want to strengthen, ignore what you want to weaken.
+Personal example is the most powerful tool. Children learn from what we do, not what we say.
+
+### Brain Development
+The prefrontal cortex develops until age 25. Children cannot regulate emotions like adults - it's biology, not "bad will".
+Adjust expectations to age. Before psychological analysis - rule out hunger and tiredness.
+
+## Response Rules:
+- Always provide an empathic interpretation of the child's behavior (EFRAT)
+- Suggest a specific phrase the parent can say - warm, respectful, age-appropriate
+- Never suggest threats, punishments, bribes, or humiliation
+- Never suggest "talking about it" during a crisis - only after
+- Encourage effort and process, not traits
+- Be brief and practical - the parent is stressed right now`;
+}
+
+function getPromptForLanguage(session: Session, child: Child, history: string): string {
   const lang = getCurrentLanguage();
   const t = getTranslations();
 
   if (lang === 'he') {
-    return `אתה יועץ הורות מקצועי ומנוסה. תפקידך לעזור להורים להתמודד עם סיטואציות מאתגרות עם ילדיהם.
+    return `${getMethodologyPromptHe()}
 
 מידע על הילד:
 - שם: ${child.name}
@@ -128,7 +263,7 @@ function getPromptForLanguage(session: Session, child: Child): string {
 ${child.gender ? `- מין: ${child.gender === 'male' ? 'בן' : 'בת'}` : ''}
 ${child.characteristics ? `- מאפיינים: ${child.characteristics}` : ''}
 ${child.notes ? `- הערות: ${child.notes}` : ''}
-
+${history}
 הקשר הסיטואציה:
 - מיקום: ${t.context.locations[session.context.location]}
 - נוכחות: ${t.context.presence[session.context.presence]}
@@ -145,20 +280,21 @@ ${session.clarifications.map(c => `- ${c.question}: ${c.answer}`).join('\n')}
 
 אנא ספק תשובה מעשית ופרקטית בפורמט JSON הבא:
 {
-  "doNow": "מה לעשות עכשיו - הנחיות קצרות וברורות (2-3 משפטים)",
-  "dontDo": "מה לא לעשות - התנהגויות שכדאי להימנע מהן (2-3 משפטים)",
-  "sayThis": "משפט ספציפי אחד לומר לילד - מנוסח בעברית טבעית וחמה"
+  "doNow": "מה לעשות עכשיו - הנחיות קצרות וברורות לפי הגישה (2-3 משפטים)",
+  "dontDo": "מה לא לעשות - התנהגויות שכדאי להימנע מהן לפי הגישה (2-3 משפטים)",
+  "sayThis": "משפט ספציפי אחד לומר לילד - מנוסח בעברית טבעית וחמה, מבוסס על אמפתיה ושיקוף"
 }
 
 חשוב:
-- התשובה צריכה להיות מותאמת לגיל הילד
+- התשובה צריכה להיות מותאמת לגיל הילד ולהתפתחות המוחית שלו
 - היה קצר ופרקטי
 - התמקד בפעולות מיידיות
 - התחשב בהקשר והמצב הרגשי של ההורה
 - השתמש בשפה חמה ותומכת
+- בשדה sayThis - הצע משפט שמשקף את הרגש של הילד ומתקף אותו
 - החזר רק את ה-JSON, ללא טקסט נוסף`;
   } else {
-    return `You are a professional and experienced parenting consultant. Your role is to help parents deal with challenging situations with their children.
+    return `${getMethodologyPromptEn()}
 
 Information about the child:
 - Name: ${child.name}
@@ -166,7 +302,7 @@ Information about the child:
 ${child.gender ? `- Gender: ${child.gender === 'male' ? 'Boy' : 'Girl'}` : ''}
 ${child.characteristics ? `- Characteristics: ${child.characteristics}` : ''}
 ${child.notes ? `- Notes: ${child.notes}` : ''}
-
+${history}
 Situation context:
 - Location: ${t.context.locations[session.context.location]}
 - Presence: ${t.context.presence[session.context.presence]}
@@ -183,17 +319,18 @@ ${session.clarifications.map(c => `- ${c.question}: ${c.answer}`).join('\n')}
 
 Please provide a practical and actionable response in the following JSON format:
 {
-  "doNow": "What to do now - short and clear instructions (2-3 sentences)",
-  "dontDo": "What not to do - behaviors to avoid (2-3 sentences)",
-  "sayThis": "One specific phrase to say to the child - warm and natural"
+  "doNow": "What to do now - short and clear instructions based on the methodology (2-3 sentences)",
+  "dontDo": "What not to do - behaviors to avoid based on the methodology (2-3 sentences)",
+  "sayThis": "One specific phrase to say to the child - warm, natural, based on empathy and reflection"
 }
 
 Important:
-- The response should be age-appropriate
+- The response should be age-appropriate considering brain development stage
 - Be brief and practical
 - Focus on immediate actions
 - Consider the context and parent's emotional state
 - Use warm and supportive language
+- In sayThis - suggest a phrase that reflects and validates the child's emotion
 - Return only the JSON, no additional text`;
   }
 }
@@ -202,7 +339,8 @@ function getFollowUpPromptForLanguage(
   session: Session,
   child: Child,
   conversationHistory: ConversationTurn[],
-  feedback: string
+  feedback: string,
+  history: string
 ): string {
   const lang = getCurrentLanguage();
   const t = getTranslations();
@@ -216,14 +354,16 @@ function getFollowUpPromptForLanguage(
 ${turn.followUp ? `משוב ההורה: ${turn.followUp}` : ''}
 `).join('\n');
 
-    return `אתה יועץ הורות מקצועי ומנוסה. ההורה קיבל עצה אבל היא לא עזרה, והוא מבקש עזרה נוספת.
+    return `${getMethodologyPromptHe()}
+
+ההורה קיבל עצה אבל היא לא עזרה, והוא מבקש עזרה נוספת.
 
 מידע על הילד:
 - שם: ${child.name}
 - גיל: ${child.age}
 ${child.gender ? `- מין: ${child.gender === 'male' ? 'בן' : 'בת'}` : ''}
 ${child.characteristics ? `- מאפיינים: ${child.characteristics}` : ''}
-
+${history}
 הקשר הסיטואציה:
 - מיקום: ${t.context.locations[session.context.location]}
 - נוכחות: ${t.context.presence[session.context.presence]}
@@ -238,14 +378,18 @@ ${historyText}
 משוב חדש מההורה:
 ${feedback}
 
-אנא ספק עצה חדשה ושונה, שלוקחת בחשבון שהעצה הקודמת לא עבדה.
-נסה גישה אחרת!
+העצה הקודמת לא עבדה. נסה כלי אחר מתוך הגישה:
+- אם ניסית אמפתיה ישירה, נסה משחק בפנטזיה ("הלוואי ש...")
+- אם ניסית שיקוף, נסה שתיקה ונוכחות פיזית
+- אם ניסית לדבר, נסה לתת מרחב ולהתעלם (אם אין סכנה)
+- אם המצב מתגבר, הצע להורה לקחת נשימה ולשאול את 3 השאלות: הכרחי? חיובי? בחסד?
+- שקול אם יש צורך בתוצאה טבעית במקום התערבות
 
 פורמט JSON:
 {
-  "doNow": "מה לעשות עכשיו - גישה חדשה ושונה (2-3 משפטים)",
+  "doNow": "מה לעשות עכשיו - גישה חדשה ושונה מתוך הכלים של הגישה (2-3 משפטים)",
   "dontDo": "מה לא לעשות (2-3 משפטים)",
-  "sayThis": "משפט ספציפי אחד לומר לילד - שונה מהקודם"
+  "sayThis": "משפט ספציפי אחד לומר לילד - שונה מהקודם, מבוסס על כלי אחר מהגישה"
 }`;
   } else {
     const historyText = conversationHistory.map((turn, i) => `
@@ -256,14 +400,16 @@ Advice ${i + 1}:
 ${turn.followUp ? `Parent feedback: ${turn.followUp}` : ''}
 `).join('\n');
 
-    return `You are a professional and experienced parenting consultant. The parent received advice but it didn't help, and they're asking for additional help.
+    return `${getMethodologyPromptEn()}
+
+The parent received advice but it didn't help, and they're asking for additional help.
 
 Information about the child:
 - Name: ${child.name}
 - Age: ${child.age}
 ${child.gender ? `- Gender: ${child.gender === 'male' ? 'Boy' : 'Girl'}` : ''}
 ${child.characteristics ? `- Characteristics: ${child.characteristics}` : ''}
-
+${history}
 Situation context:
 - Location: ${t.context.locations[session.context.location]}
 - Presence: ${t.context.presence[session.context.presence]}
@@ -278,23 +424,28 @@ ${historyText}
 New feedback from the parent:
 ${feedback}
 
-Please provide new and different advice, considering that the previous advice didn't work.
-Try a different approach!
+The previous advice didn't work. Try a different tool from the methodology:
+- If direct empathy was tried, try fantasy play ("I wish I had a magic wand...")
+- If reflection was tried, try silence and physical presence
+- If talking was tried, try giving space and ignoring (if safe)
+- If the situation is escalating, suggest the parent breathe and ask the 3 questions: Necessary? Positive? Kind?
+- Consider whether a natural consequence would work better than intervention
 
 JSON format:
 {
-  "doNow": "What to do now - new and different approach (2-3 sentences)",
+  "doNow": "What to do now - new and different approach using a different tool from the methodology (2-3 sentences)",
   "dontDo": "What not to do (2-3 sentences)",
-  "sayThis": "One specific phrase to say to the child - different from before"
+  "sayThis": "One specific phrase to say to the child - different from before, based on a different tool from the methodology"
 }`;
   }
 }
 
 async function generateWithClaude(
   session: Session,
-  child: Child
+  child: Child,
+  history: string
 ): Promise<AIResponse> {
-  const prompt = getPromptForLanguage(session, child);
+  const prompt = getPromptForLanguage(session, child, history);
 
   const anthropic = getAnthropicClient();
   const message = await anthropic.messages.create({
@@ -330,9 +481,10 @@ async function generateWithClaude(
 
 async function generateWithOpenAI(
   session: Session,
-  child: Child
+  child: Child,
+  history: string
 ): Promise<AIResponse> {
-  const prompt = getPromptForLanguage(session, child);
+  const prompt = getPromptForLanguage(session, child, history);
 
   let content: string | null;
 
@@ -365,11 +517,15 @@ async function generateWithOpenAI(
 
 export async function generateResponse(
   session: Session,
-  child: Child
+  child: Child,
+  completedInteractions: CompletedInteraction[] = []
 ): Promise<AIResponse> {
   const hasOpenAI = hasOpenAIAccess();
   const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
                     import.meta.env.VITE_ANTHROPIC_API_KEY !== 'your_anthropic_api_key_here';
+
+  const lang = getCurrentLanguage();
+  const history = buildHistorySection(child.id, completedInteractions, session.description, lang);
 
   if (!hasOpenAI && !hasClaude) {
     console.warn('No AI API key configured, using mock responses');
@@ -380,10 +536,10 @@ export async function generateResponse(
   try {
     if (hasOpenAI) {
       console.log('Using OpenAI for response generation');
-      return await generateWithOpenAI(session, child);
+      return await generateWithOpenAI(session, child, history);
     } else {
       console.log('Using Claude for response generation');
-      return await generateWithClaude(session, child);
+      return await generateWithClaude(session, child, history);
     }
   } catch (error) {
     console.error('Error calling AI API:', error);
@@ -392,8 +548,8 @@ export async function generateResponse(
       if (hasOpenAI && hasClaude) {
         console.log('Falling back to alternative AI provider');
         return hasOpenAI
-          ? await generateWithClaude(session, child)
-          : await generateWithOpenAI(session, child);
+          ? await generateWithClaude(session, child, history)
+          : await generateWithOpenAI(session, child, history);
       }
     } catch (fallbackError) {
       console.error('Fallback AI provider also failed:', fallbackError);
@@ -408,7 +564,8 @@ export async function generateFollowUpResponse(
   session: Session,
   child: Child,
   conversationHistory: ConversationTurn[],
-  feedback: string
+  feedback: string,
+  completedInteractions: CompletedInteraction[] = []
 ): Promise<AIResponse> {
   const hasOpenAI = hasOpenAIAccess();
   const hasClaude = import.meta.env.VITE_ANTHROPIC_API_KEY &&
@@ -420,7 +577,9 @@ export async function generateFollowUpResponse(
     return findMatchingResponse(feedback);
   }
 
-  const followUpPrompt = getFollowUpPromptForLanguage(session, child, conversationHistory, feedback);
+  const lang = getCurrentLanguage();
+  const history = buildHistorySection(child.id, completedInteractions, session.description, lang);
+  const followUpPrompt = getFollowUpPromptForLanguage(session, child, conversationHistory, feedback, history);
 
   try {
     if (hasOpenAI) {
@@ -519,7 +678,11 @@ function getDailyReportFromDescriptionPrompt(
   const lang = getCurrentLanguage();
 
   if (lang === 'he') {
-    return `אתה יועץ הורות מקצועי ומנוסה. הורה מספר לך על היום שלו עם הילד.
+    return `${getMethodologyPromptHe()}
+
+## משימה: דוח יומי
+
+הורה מספר לך על היום שלו עם הילד. נתח את היום לפי עקרונות הגישה.
 
 מידע על הילד:
 - שם: ${child.name}
@@ -532,21 +695,25 @@ ${description}
 
 אנא נתח את היום ותן תובנות בפורמט JSON הבא:
 {
-  "summary": "סיכום קצר של היום מנקודת מבט מקצועית (2-3 משפטים)",
-  "patterns": ["דפוס התנהגותי שזיהית", "דפוס נוסף אם רלוונטי"],
-  "successHighlights": "מה ההורה עשה טוב היום - חזק אותו! (2-3 משפטים)",
-  "areasToWatch": "נקודה אחת לשים לב אליה או לשפר (2-3 משפטים)",
-  "tomorrowTips": ["טיפ מעשי 1", "טיפ מעשי 2", "טיפ מעשי 3"]
+  "summary": "סיכום קצר של היום מנקודת מבט הגישה - זהה רגעי אמפתיה, שליטה, או הדבקה רגשית (2-3 משפטים)",
+  "patterns": ["דפוס שזיהית לפי אפר\"ת - איזו פרשנות הובילה לאיזו תגובה", "דפוס נוסף אם רלוונטי"],
+  "successHighlights": "רגעים שבהם ההורה הגיב בהתאם לגישה - עודד מאמץ, גילה אמפתיה, שחרר שליטה, נשם לפני תגובה (2-3 משפטים)",
+  "areasToWatch": "נקודה אחת לשים לב אליה - הצע פרשנות חלופית (אפר\"ת) או כלי ספציפי מהגישה (2-3 משפטים)",
+  "tomorrowTips": ["טיפ מעשי מבוסס על הגישה 1", "טיפ מעשי 2", "טיפ מעשי 3"]
 }
 
 חשוב:
-- היה חיובי ומעודד
-- התמקד בדברים הטובים שההורה עשה
-- תן טיפים מעשיים וספציפיים
-- התאם את התובנות לגיל הילד
+- עודד מאמץ, לא תכונות! ("השקעת היום" ולא "את אמא מדהימה")
+- התמקד ברגעים שההורה הגיב נכון לפי הגישה
+- הטיפים צריכים להיות מבוססים על כלים ספציפיים מהגישה
+- התאם את התובנות לגיל הילד ולהתפתחות המוחית שלו
 - החזר רק את ה-JSON, ללא טקסט נוסף`;
   } else {
-    return `You are a professional and experienced parenting consultant. A parent is telling you about their day with their child.
+    return `${getMethodologyPromptEn()}
+
+## Task: Daily Report
+
+A parent is telling you about their day with their child. Analyze the day according to the methodology's principles.
 
 Information about the child:
 - Name: ${child.name}
@@ -559,18 +726,18 @@ ${description}
 
 Please analyze the day and provide insights in the following JSON format:
 {
-  "summary": "Brief professional summary of the day (2-3 sentences)",
-  "patterns": ["Behavioral pattern you identified", "Another pattern if relevant"],
-  "successHighlights": "What the parent did well today - encourage them! (2-3 sentences)",
-  "areasToWatch": "One area to pay attention to or improve (2-3 sentences)",
-  "tomorrowTips": ["Practical tip 1", "Practical tip 2", "Practical tip 3"]
+  "summary": "Brief summary from the methodology's perspective - identify moments of empathy, control, or emotional contagion (2-3 sentences)",
+  "patterns": ["Pattern identified using EFRAT - which interpretation led to which response", "Another pattern if relevant"],
+  "successHighlights": "Moments where the parent responded according to the methodology - encouraged effort, showed empathy, released control, breathed before reacting (2-3 sentences)",
+  "areasToWatch": "One area to improve - suggest an alternative interpretation (EFRAT) or a specific tool from the methodology (2-3 sentences)",
+  "tomorrowTips": ["Practical tip based on the methodology 1", "Practical tip 2", "Practical tip 3"]
 }
 
 Important:
-- Be positive and encouraging
-- Focus on the good things the parent did
-- Give practical and specific tips
-- Tailor insights to the child's age
+- Encourage effort, not traits! ("You invested today" not "You're an amazing parent")
+- Focus on moments where the parent responded well according to the methodology
+- Tips should be based on specific tools from the methodology
+- Tailor insights to the child's age and brain development stage
 - Return only the JSON, no additional text`;
   }
 }

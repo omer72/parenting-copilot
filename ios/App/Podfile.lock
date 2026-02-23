@@ -1,7 +1,7 @@
 PODS:
-  - Capacitor (8.0.1):
+  - Capacitor (8.0.2):
     - CapacitorCordova
-  - CapacitorCordova (8.0.1)
+  - CapacitorCordova (8.0.2)
   - CapacitorSplashScreen (8.0.0):
     - Capacitor
   - CapacitorStatusBar (8.0.0):
@@ -10,31 +10,31 @@ PODS:
     - Capacitor
 
 DEPENDENCIES:
-  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
-  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
-  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
-  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
-  - CapacitorVoiceRecorder (from `../../node_modules/capacitor-voice-recorder`)
+  - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@8.0.2_@capacitor+core@8.0.2/node_modules/@capacitor/ios`)"
+  - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.0.2_@capacitor+core@8.0.2/node_modules/@capacitor/ios`)"
+  - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/status-bar`)"
+  - "CapacitorVoiceRecorder (from `../../node_modules/.pnpm/capacitor-voice-recorder@7.0.6_@capacitor+core@8.0.2_@capacitor+filesystem@8.1.0_@capacitor+core@8.0.2_/node_modules/capacitor-voice-recorder`)"
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../node_modules/@capacitor/ios"
+    :path: "../../node_modules/.pnpm/@capacitor+ios@8.0.2_@capacitor+core@8.0.2/node_modules/@capacitor/ios"
   CapacitorCordova:
-    :path: "../../node_modules/@capacitor/ios"
+    :path: "../../node_modules/.pnpm/@capacitor+ios@8.0.2_@capacitor+core@8.0.2/node_modules/@capacitor/ios"
   CapacitorSplashScreen:
-    :path: "../../node_modules/@capacitor/splash-screen"
+    :path: "../../node_modules/.pnpm/@capacitor+splash-screen@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
-    :path: "../../node_modules/@capacitor/status-bar"
+    :path: "../../node_modules/.pnpm/@capacitor+status-bar@8.0.0_@capacitor+core@8.0.2/node_modules/@capacitor/status-bar"
   CapacitorVoiceRecorder:
-    :path: "../../node_modules/capacitor-voice-recorder"
+    :path: "../../node_modules/.pnpm/capacitor-voice-recorder@7.0.6_@capacitor+core@8.0.2_@capacitor+filesystem@8.1.0_@capacitor+core@8.0.2_/node_modules/capacitor-voice-recorder"
 
 SPEC CHECKSUMS:
-  Capacitor: ff35b0f66370b84aa238251b35b91886a3207c16
-  CapacitorCordova: 0d65b9bb74e995dcecb9463f34f1af2aba6f955c
+  Capacitor: 2b79172ad27f3be2d103cce88b8eb9803fdcc744
+  CapacitorCordova: 921bdb690ebe82421b24fce45552fd3dea2ae43a
   CapacitorSplashScreen: 422880d7117605c30699eb4b21644b62db42e86c
   CapacitorStatusBar: 312e2e67928dfe9514c4a8916a1fd610552f5f35
   CapacitorVoiceRecorder: 9158861be982f32d411769723a4d813d6ce46135
 
-PODFILE CHECKSUM: fe09b7bd30cc42bf6b123ad9afb81b2ddeec26c3
+PODFILE CHECKSUM: 231b6fb4f2e3e9077c63fb1e557463ceea6b5d01
 
 COCOAPODS: 1.15.2

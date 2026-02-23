@@ -10,7 +10,7 @@ import type { AIResponse, Session, ConversationTurn } from '../types';
 
 export function Response() {
   const navigate = useNavigate();
-  const { currentSession, getChildById, setCurrentSession, saveInteraction } = useApp();
+  const { currentSession, getChildById, setCurrentSession, saveInteraction, completedInteractions } = useApp();
   const { t, isRTL } = useTranslation();
 
   const [response, setResponse] = useState<AIResponse | null>(null);
@@ -37,7 +37,8 @@ export function Response() {
       try {
         const aiResponse = await generateResponse(
           currentSession as Session,
-          childData
+          childData,
+          completedInteractions
         );
         setResponse(aiResponse);
       } catch (error) {
@@ -135,7 +136,8 @@ export function Response() {
         currentSession as Session,
         child,
         updatedHistory,
-        followUpText
+        followUpText,
+        completedInteractions
       );
       setResponse(newResponse);
       setFeedbackState('pending');
