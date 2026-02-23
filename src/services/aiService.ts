@@ -262,13 +262,16 @@ function getPromptForLanguage(session: Session, child: Child, history: string): 
 - גיל: ${child.age}
 ${child.gender ? `- מין: ${child.gender === 'male' ? 'בן' : 'בת'}` : ''}
 ${child.characteristics ? `- מאפיינים: ${child.characteristics}` : ''}
+${child.siblings ? `- אחים: ${child.siblings}` : ''}
+${child.knownChallenges && child.knownChallenges.length > 0 ? `- אתגרים מוכרים: ${child.knownChallenges.map(c => t.editChild.challenges[c]).join(', ')}` : ''}
 ${child.notes ? `- הערות: ${child.notes}` : ''}
 ${history}
 הקשר הסיטואציה:
 - מיקום: ${t.context.locations[session.context.location]}
 - נוכחות: ${t.context.presence[session.context.presence]}
-- פרטיות: ${t.context.physicality[session.context.physicality]}
 - מצב רוח ההורה: ${t.context.emotionalState[session.context.emotionalState]}
+- מצב פיזי הילד: ${t.context.childPhysicalState[session.context.childPhysicalState]}
+- תדירות: ${t.context.frequency[session.context.frequency]}
 
 תיאור הסיטואציה:
 ${session.description}
@@ -301,13 +304,16 @@ Information about the child:
 - Age: ${child.age}
 ${child.gender ? `- Gender: ${child.gender === 'male' ? 'Boy' : 'Girl'}` : ''}
 ${child.characteristics ? `- Characteristics: ${child.characteristics}` : ''}
+${child.siblings ? `- Siblings: ${child.siblings}` : ''}
+${child.knownChallenges && child.knownChallenges.length > 0 ? `- Known challenges: ${child.knownChallenges.map(c => t.editChild.challenges[c]).join(', ')}` : ''}
 ${child.notes ? `- Notes: ${child.notes}` : ''}
 ${history}
 Situation context:
 - Location: ${t.context.locations[session.context.location]}
 - Presence: ${t.context.presence[session.context.presence]}
-- Privacy: ${t.context.physicality[session.context.physicality]}
 - Parent's emotional state: ${t.context.emotionalState[session.context.emotionalState]}
+- Child's physical state: ${t.context.childPhysicalState[session.context.childPhysicalState]}
+- Frequency: ${t.context.frequency[session.context.frequency]}
 
 Description of the situation:
 ${session.description}
@@ -363,11 +369,15 @@ ${turn.followUp ? `משוב ההורה: ${turn.followUp}` : ''}
 - גיל: ${child.age}
 ${child.gender ? `- מין: ${child.gender === 'male' ? 'בן' : 'בת'}` : ''}
 ${child.characteristics ? `- מאפיינים: ${child.characteristics}` : ''}
+${child.siblings ? `- אחים: ${child.siblings}` : ''}
+${child.knownChallenges && child.knownChallenges.length > 0 ? `- אתגרים מוכרים: ${child.knownChallenges.map(c => t.editChild.challenges[c]).join(', ')}` : ''}
 ${history}
 הקשר הסיטואציה:
 - מיקום: ${t.context.locations[session.context.location]}
 - נוכחות: ${t.context.presence[session.context.presence]}
 - מצב רוח ההורה: ${t.context.emotionalState[session.context.emotionalState]}
+- מצב פיזי הילד: ${t.context.childPhysicalState[session.context.childPhysicalState]}
+- תדירות: ${t.context.frequency[session.context.frequency]}
 
 תיאור הסיטואציה המקורי:
 ${session.description}
@@ -409,11 +419,15 @@ Information about the child:
 - Age: ${child.age}
 ${child.gender ? `- Gender: ${child.gender === 'male' ? 'Boy' : 'Girl'}` : ''}
 ${child.characteristics ? `- Characteristics: ${child.characteristics}` : ''}
+${child.siblings ? `- Siblings: ${child.siblings}` : ''}
+${child.knownChallenges && child.knownChallenges.length > 0 ? `- Known challenges: ${child.knownChallenges.map(c => t.editChild.challenges[c]).join(', ')}` : ''}
 ${history}
 Situation context:
 - Location: ${t.context.locations[session.context.location]}
 - Presence: ${t.context.presence[session.context.presence]}
 - Parent's emotional state: ${t.context.emotionalState[session.context.emotionalState]}
+- Child's physical state: ${t.context.childPhysicalState[session.context.childPhysicalState]}
+- Frequency: ${t.context.frequency[session.context.frequency]}
 
 Original situation description:
 ${session.description}
@@ -658,10 +672,6 @@ export const contextLabels = {
     spouse: 'בן/בת זוג',
     other_adults: 'מבוגרים אחרים',
     strangers: 'זרים',
-  },
-  physicality: {
-    private: 'פרטי',
-    public: 'ציבורי',
   },
   emotionalState: {
     calm: 'רגוע',

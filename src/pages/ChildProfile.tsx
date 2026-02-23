@@ -17,9 +17,9 @@ import { Input, Textarea } from '../components/ui/Input';
 import { Chip } from '../components/ui/Chip';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from '../locales';
-import type { ParentingMethod } from '../types';
+import type { KnownChallenge } from '../types';
 
-const PARENTING_METHODS: ParentingMethod[] = ['positive', 'authoritative', 'attachment', 'montessori', 'respectful'];
+const KNOWN_CHALLENGES: KnownChallenge[] = ['tantrums', 'separation', 'food_refusal', 'sleep_issues', 'sibling_fights', 'social_difficulties'];
 
 export function ChildProfile() {
   const navigate = useNavigate();
@@ -35,7 +35,8 @@ export function ChildProfile() {
   const [gender, setGender] = useState<'male' | 'female' | undefined>();
   const [characteristics, setCharacteristics] = useState('');
   const [notes, setNotes] = useState('');
-  const [parentingMethod, setParentingMethod] = useState<ParentingMethod | undefined>();
+  const [siblings, setSiblings] = useState('');
+  const [knownChallenges, setKnownChallenges] = useState<KnownChallenge[]>([]);
 
   const [errors, setErrors] = useState<{ name?: string; age?: string }>({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -48,7 +49,8 @@ export function ChildProfile() {
       setGender(child.gender);
       setCharacteristics(child.characteristics);
       setNotes(child.notes || '');
-      setParentingMethod(child.parentingMethod);
+      setSiblings(child.siblings || '');
+      setKnownChallenges(child.knownChallenges || []);
     }
   }, [isEditMode, child]);
 
@@ -60,7 +62,16 @@ export function ChildProfile() {
       gender !== child.gender ||
       characteristics !== child.characteristics ||
       notes !== (child.notes || '') ||
-      parentingMethod !== child.parentingMethod
+      siblings !== (child.siblings || '') ||
+      JSON.stringify(knownChallenges) !== JSON.stringify(child.knownChallenges || [])
+    );
+  };
+
+  const toggleChallenge = (challenge: KnownChallenge) => {
+    setKnownChallenges(prev =>
+      prev.includes(challenge)
+        ? prev.filter(c => c !== challenge)
+        : [...prev, challenge]
     );
   };
 
@@ -81,6 +92,16 @@ export function ChildProfile() {
     }
   };
 
+  const buildChildData = () => ({
+    name: name.trim(),
+    age: parseInt(age),
+    gender,
+    characteristics: characteristics.trim(),
+    notes: notes.trim() || undefined,
+    siblings: siblings.trim() || undefined,
+    knownChallenges: knownChallenges.length > 0 ? knownChallenges : undefined,
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -90,14 +111,7 @@ export function ChildProfile() {
       return;
     }
 
-    const childData = {
-      name: name.trim(),
-      age: parseInt(age),
-      gender,
-      characteristics: characteristics.trim(),
-      notes: notes.trim() || undefined,
-      parentingMethod,
-    };
+    const childData = buildChildData();
 
     if (isEditMode && id) {
       updateChild(id, childData);
@@ -118,14 +132,7 @@ export function ChildProfile() {
     }
 
     if (isEditMode && id) {
-      updateChild(id, {
-        name: name.trim(),
-        age: parseInt(age),
-        gender,
-        characteristics: characteristics.trim(),
-        notes: notes.trim() || undefined,
-        parentingMethod,
-      });
+      updateChild(id, buildChildData());
     }
 
     navigate(-1);
@@ -280,10 +287,10 @@ export function ChildProfile() {
           />
 
           <Textarea
-            label={t.addChild.notesOptional}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder={t.addChild.notesPlaceholder}
+            label={t.editChild.siblings}
+            value={siblings}
+            onChange={(e) => setSiblings(e.target.value)}
+            placeholder={t.editChild.siblingsPlaceholder}
             rows={2}
           />
 
@@ -292,27 +299,33 @@ export function ChildProfile() {
               variant="body2"
               sx={{ fontWeight: 500, color: 'text.secondary', mb: 1 }}
             >
-              {t.editChild.parentingMethod}
+              {t.editChild.knownChallenges}
             </Typography>
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', display: 'block', mb: 1.5 }}
             >
-              {t.editChild.parentingMethodDescription}
+              {t.editChild.knownChallengesDescription}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {PARENTING_METHODS.map((method) => (
+              {KNOWN_CHALLENGES.map((challenge) => (
                 <Chip
-                  key={method}
-                  label={t.editChild.methods[method]}
-                  selected={parentingMethod === method}
-                  onClick={() =>
-                    setParentingMethod(parentingMethod === method ? undefined : method)
-                  }
+                  key={challenge}
+                  label={t.editChild.challenges[challenge]}
+                  selected={knownChallenges.includes(challenge)}
+                  onClick={() => toggleChallenge(challenge)}
                 />
               ))}
             </Box>
           </Box>
+
+          <Textarea
+            label={t.addChild.notesOptional}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t.addChild.notesPlaceholder}
+            rows={2}
+          />
 
           <Button type="submit" fullWidth sx={{ mt: 2 }}>
             {isEditMode ? t.common.save : t.addChild.saveAndContinue}

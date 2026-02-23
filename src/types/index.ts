@@ -1,4 +1,4 @@
-export type ParentingMethod = 'positive' | 'authoritative' | 'attachment' | 'montessori' | 'respectful';
+export type KnownChallenge = 'tantrums' | 'separation' | 'food_refusal' | 'sleep_issues' | 'sibling_fights' | 'social_difficulties';
 
 export interface Child {
   id: string;
@@ -7,19 +7,22 @@ export interface Child {
   gender?: 'male' | 'female';
   characteristics: string;
   notes?: string;
-  parentingMethod?: ParentingMethod;
+  siblings?: string;
+  knownChallenges?: KnownChallenge[];
 }
 
 export type Location = 'home' | 'street' | 'car' | 'mall' | 'restaurant';
 export type Presence = 'alone' | 'spouse' | 'other_adults' | 'strangers';
-export type Physicality = 'private' | 'public';
 export type EmotionalState = 'calm' | 'frustrated' | 'angry' | 'anxious';
+export type ChildPhysicalState = 'hungry' | 'tired' | 'sick' | 'fine';
+export type Frequency = 'first_time' | 'sometimes' | 'often';
 
 export interface SessionContext {
   location: Location;
   presence: Presence;
-  physicality: Physicality;
   emotionalState: EmotionalState;
+  childPhysicalState: ChildPhysicalState;
+  frequency: Frequency;
 }
 
 export interface Clarification {

@@ -7,7 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Chip } from '../components/ui/Chip';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from '../locales';
-import type { Location, Presence, Physicality, EmotionalState } from '../types';
+import type { Location, Presence, EmotionalState, ChildPhysicalState, Frequency } from '../types';
 
 export function Context() {
   const navigate = useNavigate();
@@ -18,10 +18,11 @@ export function Context() {
 
   const [location, setLocation] = useState<Location | null>(null);
   const [presence, setPresence] = useState<Presence | null>(null);
-  const [physicality, setPhysicality] = useState<Physicality | null>(null);
   const [emotionalState, setEmotionalState] = useState<EmotionalState | null>(null);
+  const [childPhysicalState, setChildPhysicalState] = useState<ChildPhysicalState | null>(null);
+  const [frequency, setFrequency] = useState<Frequency | null>(null);
 
-  const isComplete = location && presence && physicality && emotionalState;
+  const isComplete = location && presence && emotionalState && childPhysicalState && frequency;
 
   const handleContinue = () => {
     if (!isComplete) return;
@@ -30,8 +31,9 @@ export function Context() {
       context: {
         location,
         presence,
-        physicality,
         emotionalState,
+        childPhysicalState,
+        frequency,
       },
     });
     navigate('/describe');
@@ -52,16 +54,24 @@ export function Context() {
     { key: 'strangers', label: t.context.presence.strangers },
   ];
 
-  const physicalityOptions: { key: Physicality; label: string }[] = [
-    { key: 'private', label: t.context.physicality.private },
-    { key: 'public', label: t.context.physicality.public },
-  ];
-
   const emotionalStateOptions: { key: EmotionalState; label: string }[] = [
     { key: 'calm', label: t.context.emotionalState.calm },
     { key: 'frustrated', label: t.context.emotionalState.frustrated },
     { key: 'angry', label: t.context.emotionalState.angry },
     { key: 'anxious', label: t.context.emotionalState.anxious },
+  ];
+
+  const childPhysicalStateOptions: { key: ChildPhysicalState; label: string }[] = [
+    { key: 'fine', label: t.context.childPhysicalState.fine },
+    { key: 'hungry', label: t.context.childPhysicalState.hungry },
+    { key: 'tired', label: t.context.childPhysicalState.tired },
+    { key: 'sick', label: t.context.childPhysicalState.sick },
+  ];
+
+  const frequencyOptions: { key: Frequency; label: string }[] = [
+    { key: 'first_time', label: t.context.frequency.first_time },
+    { key: 'sometimes', label: t.context.frequency.sometimes },
+    { key: 'often', label: t.context.frequency.often },
   ];
 
   return (
@@ -160,15 +170,15 @@ export function Context() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
             >
-              {t.context.privacy}
+              {t.context.yourMood}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {physicalityOptions.map(({ key, label }) => (
+              {emotionalStateOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
                   label={label}
-                  selected={physicality === key}
-                  onClick={() => setPhysicality(key)}
+                  selected={emotionalState === key}
+                  onClick={() => setEmotionalState(key)}
                 />
               ))}
             </Box>
@@ -179,15 +189,34 @@ export function Context() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
             >
-              {t.context.yourMood}
+              {t.context.childState}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {emotionalStateOptions.map(({ key, label }) => (
+              {childPhysicalStateOptions.map(({ key, label }) => (
                 <Chip
                   key={key}
                   label={label}
-                  selected={emotionalState === key}
-                  onClick={() => setEmotionalState(key)}
+                  selected={childPhysicalState === key}
+                  onClick={() => setChildPhysicalState(key)}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 700, color: 'primary.dark', mb: 1.5 }}
+            >
+              {t.context.frequencyLabel}
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {frequencyOptions.map(({ key, label }) => (
+                <Chip
+                  key={key}
+                  label={label}
+                  selected={frequency === key}
+                  onClick={() => setFrequency(key)}
                 />
               ))}
             </Box>
