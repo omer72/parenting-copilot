@@ -221,6 +221,41 @@ export const en = {
       },
     },
   },
+  privacyPolicy: {
+    title: 'Privacy Policy',
+    lastUpdated: 'Last updated: March 2026',
+    intro: 'Kidsit.ai ("the App") is committed to protecting your privacy and the privacy of your children. This policy explains how we collect, use, and protect your information.',
+    sections: [
+      {
+        title: 'Information We Collect',
+        content: 'The App collects information you provide directly: children\'s names, ages, characteristics, and situation descriptions. This information is stored locally on your device only.',
+      },
+      {
+        title: 'How We Use Information',
+        content: 'Information is used solely to provide personalized parenting guidance. Situation descriptions are sent to external AI services (OpenAI/Anthropic) for processing but are not stored by us.',
+      },
+      {
+        title: 'Data Storage',
+        content: 'All personal information is stored locally on your device (Local Storage). We do not store personal information on our servers.',
+      },
+      {
+        title: 'Third-Party Sharing',
+        content: 'Situation descriptions are sent to AI providers (OpenAI, Anthropic) for generating recommendations. These providers are subject to their own privacy policies. We do not sell or share personal information with any other third parties.',
+      },
+      {
+        title: 'Your Rights',
+        content: 'Under the Israeli Privacy Protection Law and GDPR, you have the right to access, correct, or delete your data. Since data is stored locally, you can delete it at any time through your browser settings.',
+      },
+      {
+        title: 'Data Security',
+        content: 'We implement security measures including HTTPS, security headers, and strict content policies to protect your information.',
+      },
+      {
+        title: 'Contact Us',
+        content: 'For privacy-related questions, you can reach us through the website.',
+      },
+    ],
+  },
   ai: {
     systemPrompt: `You are a professional and experienced parenting consultant. Your role is to help parents deal with challenging situations with their children.`,
     childInfo: 'Information about the child:',

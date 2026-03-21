@@ -154,6 +154,25 @@ export function Landing() {
         >
           {t.common.disclaimer}
         </Typography>
+
+        {/* Privacy Policy Link */}
+        <Typography
+          variant="body2"
+          component="a"
+          href="/privacy"
+          onClick={(e: React.MouseEvent) => {
+            e.preventDefault();
+            navigate('/privacy');
+          }}
+          sx={{
+            color: 'primary.main',
+            mt: 2,
+            cursor: 'pointer',
+            textDecoration: 'underline',
+          }}
+        >
+          {t.privacyPolicy.title}
+        </Typography>
       </Container>
     </Box>
   );
