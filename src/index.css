@@ -8,10 +8,6 @@
   padding: 0;
 }
 
-html {
-  direction: rtl;
-}
-
 body {
   font-family: 'Heebo', system-ui, -apple-system, sans-serif;
   background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 25%, #f3e8ff 50%, #e9d5ff 100%);
