@@ -10,6 +10,7 @@ import { Clarification } from './pages/Clarification'
 import { Response } from './pages/Response'
 import { DailyReport } from './pages/DailyReport'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
+import { Demo } from './pages/Demo'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/response" element={<Response />} />
         <Route path="/daily-report" element={<DailyReport />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/demo" element={<Demo />} />
       </Routes>
     </Layout>
   )

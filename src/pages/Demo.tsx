@@ -4,6 +4,7 @@ import SosIcon from '@mui/icons-material/Sos';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import MicIcon from '@mui/icons-material/Mic';
+import { Button } from '../components/ui/Button';
 import { useTranslation } from '../locales';
 
 const featureIcons = [
@@ -13,9 +14,13 @@ const featureIcons = [
   <MicIcon key="mic" sx={{ fontSize: 28, color: '#795548' }} />,
 ];
 
-export function Landing() {
+export function Demo() {
   const navigate = useNavigate();
   const { t, isRTL } = useTranslation();
+
+  const handleEnter = () => {
+    navigate('/home');
+  };
 
   return (
     <Box
@@ -128,6 +133,15 @@ export function Landing() {
             </Box>
           ))}
         </Box>
+
+        {/* CTA Button */}
+        <Button
+          onClick={handleEnter}
+          fullWidth
+          sx={{ fontSize: '1.125rem', py: 2 }}
+        >
+          {t.landing.enterButton}
+        </Button>
 
         {/* Disclaimer */}
         <Typography
