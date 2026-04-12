@@ -1,12 +1,123 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Container, CircularProgress, TextField, type Theme } from '@mui/material';
+import { Box, Typography, CircularProgress, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import BlockIcon from '@mui/icons-material/Block';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import ForumIcon from '@mui/icons-material/Forum';
 import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
 import { useApp } from '../context/AppContext';
 import { generateResponse, generateFollowUpResponse } from '../services/aiService';
 import { useTranslation } from '../locales';
 import type { AIResponse, Session, ConversationTurn } from '../types';
+
+const PageContainer = styled(Box)({
+  background: '#f7f5f8',
+  minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+});
+
+const Header = styled(Box)({
+  backdropFilter: 'blur(6px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  border: '1px solid rgba(168, 85, 247, 0.1)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '12px 17px',
+  position: 'sticky',
+  top: 0,
+  zIndex: 10,
+});
+
+const HeaderIconButton = styled(Box)({
+  width: 40,
+  height: 40,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  borderRadius: '50%',
+  '&:hover': {
+    backgroundColor: 'rgba(168, 85, 247, 0.05)',
+  },
+});
+
+const HeroCard = styled(Box)({
+  background: 'linear-gradient(152deg, #a855f7 0%, #6b21a8 100%)',
+  borderRadius: 48,
+  padding: 24,
+  position: 'relative',
+  overflow: 'hidden',
+  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+  minHeight: 192,
+  display: 'flex',
+  alignItems: 'flex-end',
+});
+
+const HeroBadge = styled(Box)({
+  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  borderRadius: 9999,
+  padding: '3.5px 12px',
+  display: 'inline-flex',
+});
+
+const GlassCard = styled(Box)({
+  backdropFilter: 'blur(6px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  borderRadius: 48,
+  padding: 17,
+});
+
+const ChecklistItem = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 12,
+  padding: '12px 0',
+});
+
+const RedZoneItem = styled(Box)({
+  backgroundColor: '#fef2f2',
+  border: '1px solid #fee2e2',
+  borderRadius: 32,
+  padding: 13,
+  display: 'flex',
+  gap: 16,
+  alignItems: 'flex-start',
+});
+
+const SpeechBubbleRight = styled(Box)({
+  backgroundColor: '#3b82f6',
+  borderRadius: '16px 16px 16px 0',
+  padding: '16px',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+  maxWidth: '85%',
+  alignSelf: 'flex-end',
+});
+
+const SectionHeader = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  padding: '0 4px',
+});
+
+function splitIntoPoints(text: string): string[] {
+  const lines = text
+    .split(/[\n•\-–—]/)
+    .map(line => line.replace(/^\d+[.)]\s*/, '').trim())
+    .filter(line => line.length > 0);
+  return lines.length > 0 ? lines : [text];
+}
 
 export function Response() {
   const navigate = useNavigate();
@@ -18,6 +129,7 @@ export function Response() {
   const [feedbackState, setFeedbackState] = useState<'pending' | 'asking_followup' | 'loading_followup' | 'helped'>('pending');
   const [followUpText, setFollowUpText] = useState('');
   const [conversationHistory, setConversationHistory] = useState<ConversationTurn[]>([]);
+  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
 
   const child = currentSession?.childId ? getChildById(currentSession.childId) : null;
 
@@ -94,7 +206,6 @@ export function Response() {
       };
       setConversationHistory(prev => [...prev, finalTurn]);
 
-      // Save interaction for daily report
       if (currentSession?.childId && currentSession?.context && currentSession?.description) {
         saveInteraction({
           timestamp: new Date(),
@@ -117,7 +228,6 @@ export function Response() {
   const handleSubmitFollowUp = async () => {
     if (!followUpText.trim() || !response || !currentSession || !child) return;
 
-    // Save current response to history
     const newTurn: ConversationTurn = {
       response,
       feedback: 'not_helped',
@@ -127,7 +237,6 @@ export function Response() {
     const updatedHistory = [...conversationHistory, newTurn];
     setConversationHistory(updatedHistory);
 
-    // Reset for new response
     setFeedbackState('loading_followup');
     setFollowUpText('');
 
@@ -140,6 +249,7 @@ export function Response() {
         completedInteractions
       );
       setResponse(newResponse);
+      setCheckedItems(new Set());
       setFeedbackState('pending');
     } catch (error) {
       console.error('Error generating follow-up:', error);
@@ -147,139 +257,242 @@ export function Response() {
     }
   };
 
+  const toggleCheckItem = (index: number) => {
+    setCheckedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
+  const BackArrow = isRTL ? ArrowForwardIcon : ArrowBackIcon;
+  const redZoneIcons = [BlockIcon, VolumeOffIcon, PauseCircleOutlineIcon];
+
   if (loading) {
     return (
-      <Box
-        sx={{
-          minHeight: '100vh',
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <CircularProgress size={48} sx={{ mb: 2, color: 'primary.main' }} />
-        <Typography sx={{ color: 'primary.dark', fontWeight: 600 }}>
+      <PageContainer sx={{ alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress size={48} sx={{ mb: 2, color: '#a855f7' }} />
+        <Typography sx={{ color: '#7c3aed', fontWeight: 600 }}>
           {t.response.processing}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'primary.light', mt: 1, fontWeight: 500 }}>
+        <Typography variant="body2" sx={{ color: '#a78bfa', mt: 1, fontWeight: 500 }}>
           {t.response.processingTime}
         </Typography>
-      </Box>
+      </PageContainer>
     );
   }
 
   if (!response) {
     return (
-      <Box
-        sx={{
-          minHeight: '100vh',
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <PageContainer sx={{ alignItems: 'center', justifyContent: 'center', p: 2 }}>
         <Typography sx={{ color: 'text.secondary', mb: 2 }}>
           {t.response.error}
         </Typography>
         <Button onClick={handleHome}>{t.response.backHome}</Button>
-      </Box>
+      </PageContainer>
     );
   }
 
-  return (
-    <Box sx={{ minHeight: '100vh', p: 2 }}>
-      <Container maxWidth="sm">
-        {child && (
-          <Typography
-            sx={{
-              color: 'primary.main',
-              fontWeight: 700,
-              mb: 1,
-              fontSize: '1.125rem',
-            }}
-          >
-            {child.name}
-          </Typography>
-        )}
+  const doNowPoints = splitIntoPoints(response.doNow);
+  const dontDoPoints = splitIntoPoints(response.dontDo);
 
+  return (
+    <PageContainer>
+      {/* Header */}
+      <Header>
+        <HeaderIconButton onClick={handleHome}>
+          <BackArrow sx={{ fontSize: 20, color: '#0f172a' }} />
+        </HeaderIconButton>
         <Typography
-          variant="h1"
           sx={{
-            fontSize: '1.875rem',
             fontWeight: 700,
-            background: 'var(--gradient-primary)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            mb: 3,
+            fontSize: 18,
+            color: '#0f172a',
+            letterSpacing: '-0.45px',
+            textAlign: 'center',
+            flex: 1,
           }}
         >
           {t.response.title}
         </Typography>
+        <HeaderIconButton>
+          <InfoOutlinedIcon sx={{ fontSize: 20, color: '#a855f7' }} />
+        </HeaderIconButton>
+      </Header>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Card
+      {/* Main Content */}
+      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 672, mx: 'auto', width: '100%', pb: 12 }}>
+        {/* Hero Card */}
+        <HeroCard>
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <HeroBadge sx={{ mb: 1 }}>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'white',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                }}
+              >
+                {isRTL ? 'מדריך מומחה' : 'Expert Guide'}
+              </Typography>
+            </HeroBadge>
+            <Typography
+              sx={{
+                fontSize: 24,
+                fontWeight: 700,
+                color: 'white',
+                lineHeight: '32px',
+                mb: 0.5,
+              }}
+            >
+              {child?.name || (isRTL ? 'הילד שלך' : 'Your Child')}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 14,
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '20px',
+              }}
+            >
+              {currentSession?.description
+                ? currentSession.description.length > 60
+                  ? currentSession.description.substring(0, 60) + '...'
+                  : currentSession.description
+                : ''}
+            </Typography>
+          </Box>
+          {/* Decorative circle */}
+          <Box
             sx={{
-              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
-              borderColor: 'success.main',
+              position: 'absolute',
+              top: -20,
+              right: isRTL ? 'auto' : -10,
+              left: isRTL ? -10 : 'auto',
+              width: 140,
+              height: 140,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.08)',
             }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-              <Typography sx={{ fontSize: '1.5rem' }}>🟢</Typography>
-              <Box>
-                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
-                  {t.response.whatToDo}
-                </Typography>
-                <Typography color="text.secondary">{response.doNow}</Typography>
-              </Box>
-            </Box>
-          </Card>
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 20,
+              right: isRTL ? 'auto' : 20,
+              left: isRTL ? 20 : 'auto',
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.05)',
+            }}
+          />
+        </HeroCard>
 
-          <Card
-            sx={{
-              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
-              borderColor: 'error.main',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-              <Typography sx={{ fontSize: '1.5rem' }}>🔴</Typography>
-              <Box>
-                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
-                  {t.response.whatNotToDo}
+        {/* Green Zone: Action Items */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <SectionHeader>
+            <CheckCircleIcon sx={{ color: '#10b981', fontSize: 22 }} />
+            <Typography sx={{ fontWeight: 700, fontSize: 20, color: '#0f172a', letterSpacing: '-0.5px' }}>
+              {t.response.whatToDo}
+            </Typography>
+          </SectionHeader>
+          <GlassCard>
+            {doNowPoints.map((point, index) => (
+              <ChecklistItem
+                key={index}
+                onClick={() => toggleCheckItem(index)}
+                sx={{
+                  cursor: 'pointer',
+                  borderBottom: index < doNowPoints.length - 1 ? '1px solid rgba(168, 85, 247, 0.05)' : 'none',
+                  '&:hover': { backgroundColor: 'rgba(168, 85, 247, 0.02)' },
+                }}
+              >
+                {checkedItems.has(index) ? (
+                  <CheckCircleIcon sx={{ color: '#a855f7', fontSize: 24, flexShrink: 0 }} />
+                ) : (
+                  <RadioButtonUncheckedIcon sx={{ color: 'rgba(168, 85, 247, 0.3)', fontSize: 24, flexShrink: 0 }} />
+                )}
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    color: '#334155',
+                    lineHeight: '24px',
+                    textDecoration: checkedItems.has(index) ? 'line-through' : 'none',
+                    opacity: checkedItems.has(index) ? 0.6 : 1,
+                  }}
+                >
+                  {point}
                 </Typography>
-                <Typography color="text.secondary">{response.dontDo}</Typography>
-              </Box>
-            </Box>
-          </Card>
+              </ChecklistItem>
+            ))}
+          </GlassCard>
+        </Box>
 
-          <Card
-            sx={{
-              ...(isRTL ? { borderRight: 4 } : { borderLeft: 4 }),
-              borderColor: 'info.main',
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-              <Typography sx={{ fontSize: '1.5rem' }}>🔵</Typography>
-              <Box>
-                <Typography sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
-                  {t.response.whatToSay}
-                </Typography>
-                <Typography color="text.secondary" sx={{ fontWeight: 500 }}>
+        {/* Red Zone: Things to Avoid */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <SectionHeader>
+            <WarningAmberIcon sx={{ color: '#ef4444', fontSize: 22 }} />
+            <Typography sx={{ fontWeight: 700, fontSize: 20, color: '#0f172a', letterSpacing: '-0.5px' }}>
+              {t.response.whatNotToDo}
+            </Typography>
+          </SectionHeader>
+          <GlassCard sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            {dontDoPoints.map((point, index) => {
+              const IconComponent = redZoneIcons[index % redZoneIcons.length];
+              return (
+                <RedZoneItem key={index}>
+                  <IconComponent sx={{ color: '#991b1b', fontSize: 20, flexShrink: 0, mt: 0.25 }} />
+                  <Typography sx={{ fontSize: 14, color: '#991b1b', lineHeight: '20px' }}>
+                    {point}
+                  </Typography>
+                </RedZoneItem>
+              );
+            })}
+          </GlassCard>
+        </Box>
+
+        {/* Blue Zone: Scripts */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <SectionHeader>
+            <ForumIcon sx={{ color: '#3b82f6', fontSize: 22 }} />
+            <Typography sx={{ fontWeight: 700, fontSize: 20, color: '#0f172a', letterSpacing: '-0.5px' }}>
+              {t.response.whatToSay}
+            </Typography>
+          </SectionHeader>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: isRTL ? 'flex-start' : 'flex-end' }}>
+              <SpeechBubbleRight sx={{ borderRadius: isRTL ? '16px 16px 0 16px' : '16px 16px 16px 0' }}>
+                <Typography sx={{ fontSize: 14, fontWeight: 500, color: 'white', lineHeight: '20px' }}>
                   "{response.sayThis}"
                 </Typography>
-              </Box>
+              </SpeechBubbleRight>
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#94a3b8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  mt: 0.5,
+                  px: 1,
+                }}
+              >
+                {isRTL ? 'תסריט לשימוש' : 'Script to use'}
+              </Typography>
             </Box>
-          </Card>
+          </Box>
         </Box>
 
         {/* Feedback Section */}
         {feedbackState === 'pending' && (
-          <Box sx={{ mt: 3 }}>
-            <Typography sx={{ textAlign: 'center', color: 'text.secondary', mb: 1.5 }}>
+          <Box sx={{ mt: 1 }}>
+            <Typography sx={{ textAlign: 'center', color: '#64748b', mb: 1.5, fontSize: 15 }}>
               {t.response.didItHelp}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
@@ -294,60 +507,55 @@ export function Response() {
         )}
 
         {feedbackState === 'asking_followup' && (
-          <Box sx={{ mt: 3 }}>
-            <Card
+          <GlassCard sx={{ borderRadius: 6 }}>
+            <Typography sx={{ color: '#64748b', mb: 1.5, fontSize: 14 }}>
+              {t.response.followUpPrompt}
+            </Typography>
+            <TextField
+              value={followUpText}
+              onChange={(e) => setFollowUpText(e.target.value)}
+              placeholder={t.response.followUpPlaceholder}
+              multiline
+              rows={3}
+              fullWidth
+              dir={isRTL ? 'rtl' : 'ltr'}
               sx={{
-                bgcolor: (theme: Theme) => theme.palette.primary.light + '20',
-                borderColor: 'primary.light',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                },
               }}
-            >
-              <Typography color="text.secondary" sx={{ mb: 1.5 }}>
-                {t.response.followUpPrompt}
-              </Typography>
-              <TextField
-                value={followUpText}
-                onChange={(e) => setFollowUpText(e.target.value)}
-                placeholder={t.response.followUpPlaceholder}
-                multiline
-                rows={3}
-                fullWidth
-                dir={isRTL ? 'rtl' : 'ltr'}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                  },
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5 }}>
-                <Button onClick={handleSubmitFollowUp} disabled={!followUpText.trim()} sx={{ flex: 1 }}>
-                  {t.common.send}
-                </Button>
-                <Button onClick={() => setFeedbackState('pending')} variant="outline">
-                  {t.common.cancel}
-                </Button>
-              </Box>
-            </Card>
-          </Box>
+            />
+            <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5 }}>
+              <Button onClick={handleSubmitFollowUp} disabled={!followUpText.trim()} sx={{ flex: 1 }}>
+                {t.common.send}
+              </Button>
+              <Button onClick={() => setFeedbackState('pending')} variant="outline">
+                {t.common.cancel}
+              </Button>
+            </Box>
+          </GlassCard>
         )}
 
         {feedbackState === 'loading_followup' && (
-          <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <CircularProgress size={32} sx={{ mb: 1, color: 'primary.main' }} />
-            <Typography variant="body2" sx={{ color: 'primary.main' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 2 }}>
+            <CircularProgress size={32} sx={{ mb: 1, color: '#a855f7' }} />
+            <Typography variant="body2" sx={{ color: '#a855f7' }}>
               {t.response.thinkingNewApproach}
             </Typography>
           </Box>
         )}
 
         {feedbackState === 'helped' && (
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography sx={{ color: 'success.main', fontWeight: 500 }}>
+          <Box sx={{ textAlign: 'center', py: 1 }}>
+            <Typography sx={{ color: '#10b981', fontWeight: 500 }}>
               {t.response.gladToHelp}
             </Typography>
           </Box>
         )}
 
-        <Box sx={{ mt: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        {/* Action Buttons */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Button onClick={handleNewSituation} fullWidth>
             {t.response.newSituation}
           </Button>
@@ -360,14 +568,14 @@ export function Response() {
           variant="body2"
           sx={{
             textAlign: 'center',
-            color: 'primary.light',
-            mt: 3,
+            color: '#a78bfa',
             fontWeight: 500,
+            pb: 2,
           }}
         >
           {t.common.disclaimer}
         </Typography>
-      </Container>
-    </Box>
+      </Box>
+    </PageContainer>
   );
 }
