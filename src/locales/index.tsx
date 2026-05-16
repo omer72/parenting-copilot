@@ -22,7 +22,7 @@ const STORAGE_KEY = 'parenting-copilot-language';
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved === 'en' || saved === 'he') ? saved : 'he';
+    return (saved === 'en' || saved === 'he') ? saved : 'en';
   });
 
   const setLanguage = (lang: Language) => {
