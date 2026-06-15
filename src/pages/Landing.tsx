@@ -129,6 +129,31 @@ export function Landing() {
           ))}
         </Box>
 
+        {/* App Store badge */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mb: 2,
+          }}
+        >
+          <Box
+            component="a"
+            href="https://apple.co/4a3XNxw"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t.landing.downloadAppStore}
+            sx={{ display: 'inline-block' }}
+          >
+            <Box
+              component="img"
+              src="/badge-app-store.svg"
+              alt={t.landing.downloadAppStore}
+              sx={{ height: 48, width: 'auto' }}
+            />
+          </Box>
+        </Box>
+
         {/* Disclaimer */}
         <Typography
           variant="body2"

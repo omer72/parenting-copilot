@@ -18,6 +18,7 @@ export const en = {
     title: 'Kidsit.ai',
     subtitle: 'Your smart parenting assistant in real-time',
     enterButton: "Let's Get Started",
+    downloadAppStore: 'Download on the App Store',
     features: [
       {
         icon: '🆘',

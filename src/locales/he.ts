@@ -18,6 +18,7 @@ export const he = {
     title: 'Kidsit.ai',
     subtitle: 'העוזר החכם להורים ברגעי אמת',
     enterButton: 'בואו נתחיל',
+    downloadAppStore: 'הורידו מ-App Store',
     features: [
       {
         icon: '🆘',
