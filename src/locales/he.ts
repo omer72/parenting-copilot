@@ -16,6 +16,9 @@ export const he = {
   },
   landing: {
     title: 'Kidsit.ai',
+    badge: 'הורות מבוססת AI',
+    headlineLead: 'הכוונה חכמה',
+    headlineAccent: 'בדיוק כשצריך.',
     subtitle: 'העוזר החכם להורים ברגעי אמת',
     enterButton: 'בואו נתחיל',
     downloadAppStore: 'הורידו מ-App Store',

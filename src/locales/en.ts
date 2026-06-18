@@ -16,6 +16,9 @@ export const en = {
   },
   landing: {
     title: 'Kidsit.ai',
+    badge: 'AI parenting copilot',
+    headlineLead: 'Smart guidance',
+    headlineAccent: 'right when you need it.',
     subtitle: 'Your smart parenting assistant in real-time',
     enterButton: "Let's Get Started",
     downloadAppStore: 'Download on the App Store',
