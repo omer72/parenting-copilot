@@ -178,6 +178,27 @@ export function Landing() {
           {t.landing.subtitle}
         </Typography>
 
+        {/* Explainer video */}
+        <Box
+          component="video"
+          src="/kidsit-ai-explainer.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          controls
+          sx={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+            borderRadius: 4,
+            mb: 4,
+            boxShadow:
+              '0 24px 48px -16px rgba(31,41,55,0.35), 0 0 0 1px rgba(229,231,235,0.7)',
+          }}
+        />
+
         {/* App Store badge — primary CTA */}
         <Box
           sx={{
