@@ -22,6 +22,7 @@ export const he = {
     subtitle: 'העוזר החכם להורים ברגעי אמת',
     enterButton: 'בואו נתחיל',
     downloadAppStore: 'הורידו מ-App Store',
+    downloadGooglePlay: 'הורידו מ-Google Play',
     features: [
       {
         icon: '🆘',

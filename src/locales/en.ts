@@ -22,6 +22,7 @@ export const en = {
     subtitle: 'Your smart parenting assistant in real-time',
     enterButton: "Let's Get Started",
     downloadAppStore: 'Download on the App Store',
+    downloadGooglePlay: 'Get it on Google Play',
     features: [
       {
         icon: '🆘',

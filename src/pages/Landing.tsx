@@ -199,11 +199,14 @@ export function Landing() {
           }}
         />
 
-        {/* App Store badge — primary CTA */}
+        {/* Store badges — primary CTA */}
         <Box
           sx={{
             display: 'flex',
             justifyContent: isRTL ? 'flex-end' : 'flex-start',
+            alignItems: 'center',
+            gap: 1.5,
+            flexWrap: 'wrap',
             mb: 5,
           }}
         >
@@ -223,6 +226,25 @@ export function Landing() {
               component="img"
               src="/badge-app-store.svg"
               alt={t.landing.downloadAppStore}
+              sx={{ height: 52, width: 'auto', display: 'block' }}
+            />
+          </Box>
+          <Box
+            component="a"
+            href="https://play.google.com/store/apps/details?id=ai.kidsit.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t.landing.downloadGooglePlay}
+            sx={{
+              display: 'inline-block',
+              transition: 'transform 0.2s ease',
+              '&:hover': { transform: 'translateY(-2px)' },
+            }}
+          >
+            <Box
+              component="img"
+              src="/badge-google-play.svg"
+              alt={t.landing.downloadGooglePlay}
               sx={{ height: 52, width: 'auto', display: 'block' }}
             />
           </Box>
