@@ -203,7 +203,7 @@ export function Landing() {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: isRTL ? 'flex-end' : 'flex-start',
+            justifyContent: 'center',
             alignItems: 'center',
             gap: 1.5,
             flexWrap: 'wrap',
