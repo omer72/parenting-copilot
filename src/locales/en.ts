@@ -45,6 +45,28 @@ export const en = {
         description: 'Describe situations by voice - even when your hands are full',
       },
     ],
+    reviewsHeading: 'Loved by parents',
+    reviewsSource: 'App Store',
+    reviews: [
+      {
+        rating: 5,
+        title: 'Helpful and Thoughtful Parenting Support',
+        body: 'As a parent, I’ve found this app incredibly helpful. The design is clean, intuitive, and very easy to use. It didn’t just tell me what to do in the moment, it also helped me understand the bigger picture behind the behavior. Highly recommend to any parent looking for support and effective strategies.',
+        author: 'OzzyL10',
+      },
+      {
+        rating: 5,
+        title: 'A must have for every parent!',
+        body: 'KidSit has become a valuable tool in my parenting journey. The advice is practical, thoughtful, and available exactly when I need it. I love how easy it is to describe a situation and get clear, actionable guidance.',
+        author: 'Busy single mom1',
+      },
+      {
+        rating: 5,
+        title: 'Brilliant.',
+        body: 'Easy to use interface and super useful.',
+        author: 'jasonetr',
+      },
+    ],
   },
   home: {
     situationButton: "There's a situation now",

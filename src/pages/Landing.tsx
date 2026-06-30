@@ -5,6 +5,7 @@ import ChildCareIcon from '@mui/icons-material/ChildCare';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import MicIcon from '@mui/icons-material/Mic';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import StarIcon from '@mui/icons-material/Star';
 import { useTranslation } from '../locales';
 
 const SERIF = "'Fraunces', 'Frank Ruhl Libre', Georgia, serif";
@@ -288,6 +289,114 @@ export function Landing() {
               }}
             />
           ))}
+        </Box>
+
+        {/* App Store reviews */}
+        <Box sx={{ mb: 5 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'baseline',
+              justifyContent: 'space-between',
+              gap: 1,
+              mb: 2,
+              flexDirection: isRTL ? 'row-reverse' : 'row',
+            }}
+          >
+            <Typography
+              component="h2"
+              sx={{
+                fontFamily: SERIF,
+                fontSize: '1.5rem',
+                fontWeight: 500,
+                letterSpacing: '-0.02em',
+                color: '#1f2937',
+              }}
+            >
+              {t.landing.reviewsHeading}
+            </Typography>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: '#6b7280',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                flexDirection: isRTL ? 'row-reverse' : 'row',
+              }}
+            >
+              <StarIcon sx={{ fontSize: 14, color: '#f59e0b' }} />
+              5.0 · {t.landing.reviewsSource}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+              gap: 1.5,
+            }}
+          >
+            {t.landing.reviews.map((review, i) => (
+              <Box
+                key={i}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1,
+                  p: 2.25,
+                  borderRadius: 3,
+                  backgroundColor: 'rgba(255,255,255,0.7)',
+                  border: '1px solid rgba(229,231,235,0.8)',
+                  backdropFilter: 'blur(8px)',
+                  textAlign: isRTL ? 'right' : 'left',
+                }}
+              >
+                <Box
+                  aria-label={`${review.rating} out of 5 stars`}
+                  sx={{
+                    display: 'flex',
+                    gap: 0.25,
+                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                  }}
+                >
+                  {Array.from({ length: review.rating }).map((_, s) => (
+                    <StarIcon key={s} sx={{ fontSize: 16, color: '#f59e0b' }} />
+                  ))}
+                </Box>
+                <Typography
+                  sx={{
+                    fontSize: '0.9375rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {review.title}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.875rem',
+                    lineHeight: 1.5,
+                    color: '#4b5563',
+                  }}
+                >
+                  {review.body}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: '0.75rem',
+                    color: '#9ca3af',
+                    mt: 0.5,
+                  }}
+                >
+                  — {review.author}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
 
         {/* Feature cards */}
